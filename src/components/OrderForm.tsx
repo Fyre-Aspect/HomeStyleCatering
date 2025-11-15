@@ -47,39 +47,65 @@ export default function OrderForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Prepare order data for Formspree
+      const itemsList = cart.map(item => `${item.dishName} x${item.quantity}`).join('\n');
+      
+      const orderData = {
+        fullName: formData.fullName,
+        phone: formData.phone,
+        email: formData.email,
+        orderDate: formData.orderDate,
+        orderTime: formData.orderTime,
+        contactPreference: formData.contactPreference,
+        notes: formData.notes,
+        orderItems: itemsList,
+        totalItems: getTotalItems(),
+        timestamp: new Date().toISOString(),
+        _subject: `New Order from ${formData.fullName}`,
+      };
 
-    const orderData = {
-      ...formData,
-      items: cart,
-      totalItems: getTotalItems(),
-      timestamp: new Date().toISOString(),
-    };
+      // Send to Formspree
+      const response = await fetch('https://formspree.io/f/mvgdakkp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    console.log('Order received:', orderData);
-    
-    const itemsList = cart.map(item => `${item.dishName} x${item.quantity}`).join('\n');
-    
-    alert(
-      `Thank you, ${formData.fullName}! Your order has been received.\n\n` +
-      `Order Details:\n${itemsList}\n\n` +
-      `Total Items: ${getTotalItems()}\n` +
-      `Scheduled for: ${new Date(formData.orderDate).toLocaleDateString()} at ${formData.orderTime}\n\n` +
-      `We'll contact you via ${formData.contactPreference} shortly!`
-    );
+      if (!response.ok) {
+        throw new Error('Failed to submit order');
+      }
 
-    // Reset form
-    clearCart();
-    setFormData({
-      fullName: '',
-      phone: '',
-      email: '',
-      notes: '',
-      orderDate: getTomorrowDate(),
-      orderTime: '12:00',
-      contactPreference: 'email',
-    });
-    setIsSubmitting(false);
+      // Success notification
+      alert(
+        `Thank you, ${formData.fullName}! Your order has been received.\n\n` +
+        `Order Details:\n${itemsList}\n\n` +
+        `Total Items: ${getTotalItems()}\n` +
+        `Scheduled for: ${new Date(formData.orderDate).toLocaleDateString()} at ${formData.orderTime}\n\n` +
+        `We'll contact you via ${formData.contactPreference} shortly!`
+      );
+
+      // Reset form
+      clearCart();
+      setFormData({
+        fullName: '',
+        phone: '',
+        email: '',
+        notes: '',
+        orderDate: getTomorrowDate(),
+        orderTime: '12:00',
+        contactPreference: 'email',
+      });
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert(
+        'Sorry, there was an error submitting your order. Please try again or call us at (555) 123-4567.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (cart.length === 0) {
