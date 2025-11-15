@@ -22,6 +22,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
       dishName: dish.name,
       quantity,
       image: dish.image,
+      price: dish.price,
     });
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 2000);
@@ -51,9 +52,12 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
         <h3 className="font-display text-2xl font-bold text-warmBrown-900 mb-2">
           {dish.name}
         </h3>
-        <p className="font-sans text-warmBrown-600 mb-4 line-clamp-3">
+        <p className="font-sans text-warmBrown-600 mb-3 line-clamp-3">
           {dish.description}
         </p>
+        <div className="mb-4">
+          <span className="text-2xl font-bold text-gold-700">${dish.price.toFixed(2)}</span>
+        </div>
         
         {showOrderButton && (
           <div className="space-y-3">

@@ -67,7 +67,7 @@ export default function OrderPage() {
                   We&apos;re Here to Help
                 </h3>
                 <p className="text-warmBrown-600">
-                  Questions about your order? Call us at (555) 123-4567 or send us an email.
+                  Questions about your order? Call us at (647) 785-4298 or send us an email.
                 </p>
               </div>
             </div>

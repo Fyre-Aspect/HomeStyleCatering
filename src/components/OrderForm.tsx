@@ -12,10 +12,11 @@ interface FormData {
   orderDate: string;
   orderTime: string;
   contactPreference: 'email' | 'phone';
+  deliveryOption: 'pickup' | 'delivery';
 }
 
 export default function OrderForm() {
-  const { cart, removeFromCart, updateQuantity, clearCart, getTotalItems } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, getTotalItems, getSubtotal } = useCart();
   
   // Get tomorrow's date as minimum order date
   const getTomorrowDate = () => {
@@ -32,9 +33,15 @@ export default function OrderForm() {
     orderDate: getTomorrowDate(),
     orderTime: '12:00',
     contactPreference: 'email',
+    deliveryOption: 'pickup',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const DELIVERY_FEE = 6.00;
+  const subtotal = getSubtotal();
+  const deliveryFee = formData.deliveryOption === 'delivery' ? DELIVERY_FEE : 0;
+  const total = subtotal + deliveryFee;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,7 +56,7 @@ export default function OrderForm() {
 
     try {
       // Prepare order data for Formspree
-      const itemsList = cart.map(item => `${item.dishName} x${item.quantity}`).join('\n');
+      const itemsList = cart.map(item => `${item.dishName} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
       
       const orderData = {
         fullName: formData.fullName,
@@ -58,11 +65,15 @@ export default function OrderForm() {
         orderDate: formData.orderDate,
         orderTime: formData.orderTime,
         contactPreference: formData.contactPreference,
+        deliveryOption: formData.deliveryOption,
         notes: formData.notes,
         orderItems: itemsList,
         totalItems: getTotalItems(),
+        subtotal: `$${subtotal.toFixed(2)}`,
+        deliveryFee: `$${deliveryFee.toFixed(2)}`,
+        totalPrice: `$${total.toFixed(2)}`,
         timestamp: new Date().toISOString(),
-        _subject: `New Order from ${formData.fullName}`,
+        _subject: `New Order from ${formData.fullName} - $${total.toFixed(2)}`,
       };
 
       // Send to Formspree
@@ -82,8 +93,10 @@ export default function OrderForm() {
       alert(
         `Thank you, ${formData.fullName}! Your order has been received.\n\n` +
         `Order Details:\n${itemsList}\n\n` +
-        `Total Items: ${getTotalItems()}\n` +
-        `Scheduled for: ${new Date(formData.orderDate).toLocaleDateString()} at ${formData.orderTime}\n\n` +
+        `Subtotal: $${subtotal.toFixed(2)}\n` +
+        (deliveryFee > 0 ? `Delivery Fee: $${deliveryFee.toFixed(2)}\n` : '') +
+        `Total: $${total.toFixed(2)}\n\n` +
+        `${formData.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'} scheduled for: ${new Date(formData.orderDate).toLocaleDateString()} at ${formData.orderTime}\n\n` +
         `We'll contact you via ${formData.contactPreference} shortly!`
       );
 
@@ -97,11 +110,12 @@ export default function OrderForm() {
         orderDate: getTomorrowDate(),
         orderTime: '12:00',
         contactPreference: 'email',
+        deliveryOption: 'pickup',
       });
     } catch (error) {
       console.error('Error submitting order:', error);
       alert(
-        'Sorry, there was an error submitting your order. Please try again or call us at (555) 123-4567.'
+        'Sorry, there was an error submitting your order. Please try again or call us at (647) 785-4298.'
       );
     } finally {
       setIsSubmitting(false);
@@ -132,10 +146,10 @@ export default function OrderForm() {
       {/* Call Now Button */}
       <div className="mb-8 text-center">
         <a
-          href="tel:5551234567"
+          href="tel:6477854298"
           className="inline-block bg-deepRed-600 hover:bg-deepRed-700 text-white font-sans font-bold text-lg md:text-xl py-4 px-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 hover:scale-105"
         >
-          📞 Call Now: (555) 123-4567
+          📞 Call Now: (647) 785-4298
         </a>
         <p className="mt-4 font-sans text-warmBrown-600">Or complete your order below</p>
       </div>
@@ -168,6 +182,8 @@ export default function OrderForm() {
                 />
                 <div className="flex-1">
                   <h5 className="font-sans font-semibold text-warmBrown-900">{item.dishName}</h5>
+                  <p className="text-sm text-warmBrown-600">${item.price.toFixed(2)} each</p>
+                  <p className="text-sm font-bold text-gold-700">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -192,6 +208,23 @@ export default function OrderForm() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-warmBrown-200 space-y-3">
+            <div className="flex justify-between text-base">
+              <span className="font-sans text-warmBrown-700">Subtotal:</span>
+              <span className="font-sans font-semibold text-warmBrown-900">${subtotal.toFixed(2)}</span>
+            </div>
+            {deliveryFee > 0 && (
+              <div className="flex justify-between text-base">
+                <span className="font-sans text-warmBrown-700">Delivery Fee:</span>
+                <span className="font-sans font-semibold text-warmBrown-900">${deliveryFee.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-lg pt-3 border-t border-warmBrown-200">
+              <span className="font-sans font-bold text-warmBrown-900">Total:</span>
+              <span className="font-sans font-bold text-gold-700 text-2xl">${total.toFixed(2)}</span>
+            </div>
           </div>
 
           <div className="mt-6 pt-6 border-t border-warmBrown-200">
@@ -235,7 +268,7 @@ export default function OrderForm() {
               onChange={handleChange}
               required
               className="w-full font-sans px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
-              placeholder="(555) 123-4567"
+              placeholder="(647) 785-4298"
             />
           </div>
 
@@ -285,6 +318,41 @@ export default function OrderForm() {
                 className="w-full px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-warmBrown-800 mb-3">
+              Delivery Option *
+            </label>
+            <div className="flex gap-6">
+              <label className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="deliveryOption"
+                  value="pickup"
+                  checked={formData.deliveryOption === 'pickup'}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-gold-600 focus:ring-gold-500 mr-2"
+                />
+                <span className="text-warmBrown-700 group-hover:text-warmBrown-900 transition-colors">Pickup (Free)</span>
+              </label>
+              <label className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="deliveryOption"
+                  value="delivery"
+                  checked={formData.deliveryOption === 'delivery'}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-gold-600 focus:ring-gold-500 mr-2"
+                />
+                <span className="text-warmBrown-700 group-hover:text-warmBrown-900 transition-colors">Delivery (+$6.00)</span>
+              </label>
+            </div>
+            {formData.deliveryOption === 'delivery' && (
+              <p className="mt-2 text-sm text-warmBrown-600">
+                📍 Serving Kitchener-Waterloo Area
+              </p>
+            )}
           </div>
 
           <div className="bg-gold-50 border-l-4 border-gold-600 p-4 rounded-r-lg">

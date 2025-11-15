@@ -22,9 +22,9 @@ export default function Footer() {
           <div>
             <h4 className="font-sans font-semibold text-lg mb-4">Contact Us</h4>
             <div className="space-y-2 font-sans text-warmBrown-200">
-              <p>📞 Phone: (555) 123-4567</p>
-              <p>📧 Email: info@homestyle-catering.com</p>
-              <p>📍 Location: Your City, State</p>
+              <p>📞 Phone: (647) 785-4298</p>
+              <p>📧 Email: homestylecateringkwc@gmail.com</p>
+              <p>📍 Location: Kitchener-Waterloo Area</p>
             </div>
           </div>
 

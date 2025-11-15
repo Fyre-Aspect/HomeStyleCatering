@@ -4,6 +4,7 @@ export interface Dish {
   description: string;
   image: string;
   category: string;
+  price: number;
   featured?: boolean;
 }
 
@@ -14,6 +15,7 @@ export const dishes: Dish[] = [
     description: 'A heavenly, cloud-like dessert infused with tropical pineapple flavor. Light, airy, and perfectly sweet.',
     image: '/images/souffle.png',
     category: 'Dessert',
+    price: 12.99,
     featured: true,
   },
   {
@@ -22,6 +24,7 @@ export const dishes: Dish[] = [
     description: 'Authentic aromatic rice dish layered with tender chicken, fragrant spices, and saffron. A traditional homestyle delicacy.',
     image: '/images/Chicken Biryani.jpg',
     category: 'Main Course',
+    price: 16.99,
     featured: true,
   },
   {
@@ -30,6 +33,7 @@ export const dishes: Dish[] = [
     description: 'Creamy, rich tomato-based curry with tender chicken pieces. A beloved classic that melts in your mouth.',
     image: '/images/Butter chicken.jpg',
     category: 'Main Course',
+    price: 15.99,
     featured: true,
   },
   {
@@ -38,6 +42,7 @@ export const dishes: Dish[] = [
     description: 'Tender lamb pieces cooked with aromatic basmati rice, exotic spices, and herbs. A royal feast on a plate.',
     image: '/images/Lamb-biryani.jpg',
     category: 'Main Course',
+    price: 19.99,
     featured: false,
   },
   {
@@ -46,6 +51,7 @@ export const dishes: Dish[] = [
     description: 'A delightful medley of fresh vegetables and fragrant basmati rice, perfectly spiced and aromatic.',
     image: '/images/Veg Biryani.png',
     category: 'Main Course',
+    price: 13.99,
     featured: false,
   },
   {
@@ -54,6 +60,7 @@ export const dishes: Dish[] = [
     description: 'Succulent chicken pieces in a flavorful, rich sauce with aromatic spices. A comfort food favorite.',
     image: '/images/Sauce Chicken.jpg',
     category: 'Main Course',
+    price: 14.99,
     featured: false,
   },
   {
@@ -62,6 +69,7 @@ export const dishes: Dish[] = [
     description: 'Tender noodles and chicken in a savory, aromatic gravy. Perfect blend of textures and flavors.',
     image: '/images/Chicken Noodle Gravy.jpg',
     category: 'Main Course',
+    price: 14.99,
     featured: false,
   },
   {
@@ -70,6 +78,7 @@ export const dishes: Dish[] = [
     description: 'A rich, slow-cooked stew of meat, lentils, and wheat. Traditional comfort food with incredible depth of flavor.',
     image: '/images/Haleem.jpg',
     category: 'Main Course',
+    price: 15.99,
     featured: false,
   },
   {
@@ -78,6 +87,7 @@ export const dishes: Dish[] = [
     description: 'Delicious homemade cake, moist and flavorful. Perfect for celebrations or a sweet treat.',
     image: '/images/Cake.jpg',
     category: 'Dessert',
+    price: 24.99,
     featured: false,
   },
   {
@@ -86,6 +96,7 @@ export const dishes: Dish[] = [
     description: 'Thick, creamy milkshake made with premium ingredients. Refreshing and indulgent.',
     image: '/images/Milkshake.jpg',
     category: 'Beverage',
+    price: 6.99,
     featured: false,
   },
 ];

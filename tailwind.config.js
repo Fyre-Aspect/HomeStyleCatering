@@ -39,8 +39,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-playfair)', 'serif'],
+        sans: ['var(--font-lora)', 'Georgia', 'serif'],
+        display: ['var(--font-cormorant)', 'Garamond', 'serif'],
       },
     },
   },

@@ -1,21 +1,23 @@
 import type { Metadata } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Lora, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { CartProvider } from '@/context/CartContext';
 
-const inter = Inter({ 
+const lora = Lora({ 
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-lora',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
-const playfair = Playfair_Display({ 
+const cormorant = Cormorant_Garamond({ 
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-cormorant',
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -37,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className={inter.className}>
+    <html lang="en" className={`${lora.variable} ${cormorant.variable}`}>
+      <body className={lora.className}>
         <CartProvider>
           <Navbar />
           <PageTransition>

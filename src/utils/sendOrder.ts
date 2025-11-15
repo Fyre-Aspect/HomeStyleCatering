@@ -20,7 +20,7 @@ export async function sendOrderEmail(orderData: OrderData): Promise<boolean> {
   // Log the order data (for development purposes)
   console.log('📧 Order Email Placeholder');
   console.log('---------------------------');
-  console.log('To: orders@simpllyaafiya.com');
+  console.log('To: homestylecateringkwc@gmail.com');
   console.log('Subject: New Order from ' + orderData.fullName);
   console.log('\nOrder Details:');
   console.log('Customer:', orderData.fullName);
