@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReviewCard from './ReviewCard';
 import type { Review } from '@/data/reviews';
 
@@ -13,6 +13,10 @@ export default function Carousel({ reviews }: CarouselProps) {
   const [isHovered, setIsHovered] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
+  }, [reviews.length]);
+
   // Auto-slide functionality
   useEffect(() => {
     if (!isHovered) {
@@ -22,14 +26,10 @@ export default function Carousel({ reviews }: CarouselProps) {
 
       return () => clearInterval(interval);
     }
-  }, [currentIndex, isHovered]);
+  }, [currentIndex, isHovered, handleNext]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
   };
 
   const goToSlide = (index: number) => {

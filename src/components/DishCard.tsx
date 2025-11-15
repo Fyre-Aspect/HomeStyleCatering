@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Button from './Button';
 import { useCart } from '@/context/CartContext';
 import type { Dish } from '@/data/dishes';
 
