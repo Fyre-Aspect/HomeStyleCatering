@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -52,7 +53,15 @@ export default function Navbar() {
       <div className="container-custom">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/Homestyle Catering.png"
+              alt="Homestyle Catering"
+              width={50}
+              height={50}
+              className="h-10 md:h-12 w-auto"
+              priority
+            />
             <h1 className="font-display text-2xl md:text-3xl font-bold text-gold-700">
               HOMESTYLÉ Catering
             </h1>

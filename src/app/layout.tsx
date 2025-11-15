@@ -25,11 +25,16 @@ export const metadata: Metadata = {
   description: 'Authentic homestyle cuisine crafted with love and tradition.',
   keywords: ['homestyle food', 'catering', 'authentic cuisine', 'biryani', 'butter chicken', 'traditional cooking'],
   authors: [{ name: 'HOMESTYLÉ Catering' }],
+  icons: {
+    icon: '/Homestyle Catering.png',
+    apple: '/Homestyle Catering.png',
+  },
   openGraph: {
     title: 'HOMESTYLÉ Catering',
     description: 'Authentic homestyle cuisine crafted with love and tradition.',
     type: 'website',
     locale: 'en_US',
+    images: ['/Homestyle Catering.png'],
   },
 };
 
