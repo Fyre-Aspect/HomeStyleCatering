@@ -13,6 +13,7 @@ interface FormData {
   orderTime: string;
   contactPreference: 'email' | 'phone';
   deliveryOption: 'pickup' | 'delivery';
+  deliveryAddress: string;
 }
 
 export default function OrderForm() {
@@ -34,6 +35,7 @@ export default function OrderForm() {
     orderTime: '12:00',
     contactPreference: 'email',
     deliveryOption: 'pickup',
+    deliveryAddress: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +68,7 @@ export default function OrderForm() {
         orderTime: formData.orderTime,
         contactPreference: formData.contactPreference,
         deliveryOption: formData.deliveryOption,
+        deliveryAddress: formData.deliveryOption === 'delivery' ? formData.deliveryAddress : 'N/A - Pickup',
         notes: formData.notes,
         orderItems: itemsList,
         totalItems: getTotalItems(),
@@ -111,6 +114,7 @@ export default function OrderForm() {
         orderTime: '12:00',
         contactPreference: 'email',
         deliveryOption: 'pickup',
+        deliveryAddress: '',
       });
     } catch (error) {
       console.error('Error submitting order:', error);
@@ -354,6 +358,25 @@ export default function OrderForm() {
               </p>
             )}
           </div>
+
+          {/* Delivery Address Field - Shows only when delivery is selected */}
+          {formData.deliveryOption === 'delivery' && (
+            <div>
+              <label htmlFor="deliveryAddress" className="block font-sans text-sm font-semibold text-warmBrown-800 mb-2">
+                Delivery Address *
+              </label>
+              <textarea
+                id="deliveryAddress"
+                name="deliveryAddress"
+                value={formData.deliveryAddress}
+                onChange={handleChange}
+                required
+                rows={3}
+                className="w-full font-sans px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all resize-none"
+                placeholder="Enter your complete delivery address (street, city, postal code)"
+              />
+            </div>
+          )}
 
           <div className="bg-gold-50 border-l-4 border-gold-600 p-4 rounded-r-lg">
             <p className="text-sm text-warmBrown-700">

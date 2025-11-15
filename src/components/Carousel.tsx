@@ -45,14 +45,14 @@ export default function Carousel({ reviews }: CarouselProps) {
       {/* Carousel Container */}
       <div className="overflow-hidden" ref={carouselRef}>
         <div
-          className="flex transition-transform duration-500 ease-out gap-6"
+          className="flex transition-transform duration-500 ease-out"
           style={{
             transform: `translateX(-${currentIndex * 100}%)`,
           }}
         >
           {reviews.map((review) => (
-            <div key={review.id} className="w-full flex-shrink-0 px-2">
-              <div className="max-w-2xl mx-auto">
+            <div key={review.id} className="w-full flex-shrink-0 flex justify-center items-center px-4 md:px-8">
+              <div className="w-full max-w-2xl">
                 <ReviewCard review={review} />
               </div>
             </div>
