@@ -63,7 +63,7 @@ export const dishes: Dish[] = [
     description: 'A rich, slow-cooked stew of meat, lentils, and wheat. Traditional comfort food with incredible depth of flavor.',
     image: '/images/Haleem.jpg',
     category: 'Curries',
-    price: 60,
+    price: 55,
     featured: false,
   },
   
@@ -103,7 +103,7 @@ export const dishes: Dish[] = [
     description: 'A heavenly, cloud-like dessert infused with tropical pineapple flavor. Light, airy, and perfectly sweet.',
     image: '/images/souffle.png',
     category: 'Desserts',
-    price: 40,
+    price: 34,
     featured: true,
   },
   {
@@ -112,7 +112,7 @@ export const dishes: Dish[] = [
     description: 'Traditional creamy rice pudding infused with cardamom, saffron, and nuts. A classic homestyle dessert.',
     image: '/images/kheer.jpg',
     category: 'Desserts',
-    price: 35,
+    price: 30,
     featured: false,
   },
   {
@@ -121,7 +121,7 @@ export const dishes: Dish[] = [
     description: 'Warm, aromatic semolina pudding cooked with ghee, sugar, and fragrant spices. Pure comfort in every bite.',
     image: '/images/Sooji Halwa.jpg',
     category: 'Desserts',
-    price: 35,
+    price: 30,
     featured: false,
   },
 ];

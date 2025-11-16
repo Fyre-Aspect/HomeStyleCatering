@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Button from './Button';
 import OrderSuccess from './OrderSuccess';
 import PaymentMethodModal from './PaymentMethodModal';
+import OrderProcessedModal from './OrderProcessedModal';
 import { useCart } from '@/context/CartContext';
 
 interface FormData {
@@ -88,6 +89,8 @@ export default function OrderForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showProcessedModal, setShowProcessedModal] = useState(false);
+  const [processedStatus, setProcessedStatus] = useState<'processing' | 'success'>('processing');
   const [successOrderDetails, setSuccessOrderDetails] = useState<OrderDetails | null>(null);
 
   const DELIVERY_FEE = 6.00;
@@ -110,8 +113,10 @@ export default function OrderForm() {
   };
 
   const handlePaymentSelection = async (paymentMethod: 'cash' | 'etransfer') => {
-    // Close payment modal
+    // Close payment modal and show processing modal
     setShowPaymentModal(false);
+    setShowProcessedModal(true);
+    setProcessedStatus('processing');
     setIsSubmitting(true);
 
     try {
@@ -140,20 +145,15 @@ export default function OrderForm() {
         _subject: `New Order from ${formData.fullName} - $${Math.round(total)}`,
       };
 
-      // Send to Formspree
       const response = await fetch('https://formspree.io/f/mvgdakkp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to submit order');
-      }
+      if (!response.ok) throw new Error('Failed to submit order');
 
-      // Store order details for success screen
+      // Prepare success details for full summary modal
       setSuccessOrderDetails({
         customerName: formData.fullName,
         orderDate: formData.orderDate,
@@ -167,6 +167,11 @@ export default function OrderForm() {
         deliveryFee,
         total,
       });
+
+      // Flip the interim modal to "processed" then close it shortly after
+      setProcessedStatus('success');
+      await new Promise((r) => setTimeout(r, 1200));
+      setShowProcessedModal(false);
 
       // Clear cart and form
       clearCart();
@@ -183,15 +188,12 @@ export default function OrderForm() {
         paymentMethod: 'cash',
       });
 
-      // Show success screen with a slight delay so transition feels smooth
-      setTimeout(() => {
-        setShowSuccess(true);
-      }, 400);
+      // Show the detailed confirmation modal
+      setShowSuccess(true);
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert(
-        'Sorry, there was an error submitting your order. Please try again or call us at (647) 785-4298.'
-      );
+      setShowProcessedModal(false);
+      alert('Sorry, there was an error submitting your order. Please try again or call us at (647) 785-4298.');
     } finally {
       setIsSubmitting(false);
     }
@@ -572,6 +574,9 @@ export default function OrderForm() {
           onSelectPayment={handlePaymentSelection}
         />
       )}
+
+      {/* New: Post-payment processing/processed modal */}
+      {showProcessedModal && <OrderProcessedModal status={processedStatus} />}
 
       {/* Success Modal */}
       {showSuccess && successOrderDetails && (
