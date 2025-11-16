@@ -18,7 +18,7 @@ export const reviews: Review[] = [
     id: '3',
     name: 'Priya Patel',
     rating: 5,
-    text: 'Simply Aafiya lives up to its name - the food is simply amazing! Everything tastes homemade and fresh. The pineapple souffle is to die for!',
+    text: 'HOMESTYLE Catering lives up to its name - the food is simply amazing! Everything tastes homemade and fresh. The pineapple souffle is to die for!',
     date: '2025-10-25',
   },
   {

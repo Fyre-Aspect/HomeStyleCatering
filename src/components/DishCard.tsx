@@ -63,7 +63,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
         </p>
         <div className="mb-4">
           <p className="text-sm text-warmBrown-600 mb-1">Starting from</p>
-          <span className="text-2xl font-bold text-gold-700">${dish.price.toFixed(2)}</span>
+          <span className="text-2xl font-bold text-gold-700">${Math.round(dish.price)}</span>
         </div>
         
         {showOrderButton && (
@@ -83,7 +83,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
                 >
                   Regular
                   <div className="text-xs mt-1">(4-5 people)</div>
-                  <div className="text-xs font-bold mt-0.5">${dish.price.toFixed(2)}</div>
+                  <div className="text-xs font-bold mt-0.5">${Math.round(dish.price)}</div>
                 </button>
                 <button
                   type="button"
@@ -96,7 +96,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
                 >
                   Large
                   <div className="text-xs mt-1">(6+ people)</div>
-                  <div className="text-xs font-bold mt-0.5">${(dish.price * 2.24).toFixed(2)}</div>
+                  <div className="text-xs font-bold mt-0.5">${Math.round(dish.price * 2.24)}</div>
                 </button>
               </div>
             </div>

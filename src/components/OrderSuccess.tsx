@@ -177,7 +177,7 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
                     </div>
                   </div>
                   <p className="font-sans font-bold text-gold-700">
-                    ${item.price.toFixed(2)}
+                    ${Math.round(item.price)}
                   </p>
                 </div>
               ))}
@@ -188,17 +188,17 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
           <div className="border-t border-warmBrown-200 pt-4 space-y-2">
             <div className="flex justify-between font-sans text-warmBrown-700">
               <span>Subtotal:</span>
-              <span className="font-semibold">${orderDetails.subtotal.toFixed(2)}</span>
+              <span className="font-semibold">${Math.round(orderDetails.subtotal)}</span>
             </div>
             {orderDetails.deliveryFee > 0 && (
               <div className="flex justify-between font-sans text-warmBrown-700">
                 <span>Delivery Fee:</span>
-                <span className="font-semibold">${orderDetails.deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold">${Math.round(orderDetails.deliveryFee)}</span>
               </div>
             )}
             <div className="flex justify-between font-sans text-lg font-bold text-warmBrown-900 pt-2 border-t border-warmBrown-300">
               <span>Total:</span>
-              <span className="text-gold-700 text-2xl">${orderDetails.total.toFixed(2)}</span>
+              <span className="text-gold-700 text-2xl">${Math.round(orderDetails.total)}</span>
             </div>
           </div>
 

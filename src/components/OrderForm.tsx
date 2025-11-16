@@ -64,7 +64,7 @@ export default function OrderForm() {
       // Small delay so the loading state feels intentional
       await new Promise((resolve) => setTimeout(resolve, 800));
       // Prepare order data for Formspree
-      const itemsList = cart.map(item => `${item.dishName} (${item.traySize} Tray) - $${item.price.toFixed(2)}`).join('\n');
+      const itemsList = cart.map(item => `${item.dishName} (${item.traySize} Tray) - $${Math.round(item.price)}`).join('\n');
       
       const orderData = {
         fullName: formData.fullName,
@@ -78,11 +78,11 @@ export default function OrderForm() {
         notes: formData.notes,
         orderItems: itemsList,
         totalItems: getTotalItems(),
-        subtotal: `$${subtotal.toFixed(2)}`,
-        deliveryFee: `$${deliveryFee.toFixed(2)}`,
-        totalPrice: `$${total.toFixed(2)}`,
+        subtotal: `$${Math.round(subtotal)}`,
+        deliveryFee: `$${Math.round(deliveryFee)}`,
+        totalPrice: `$${Math.round(total)}`,
         timestamp: new Date().toISOString(),
-        _subject: `New Order from ${formData.fullName} - $${total.toFixed(2)}`,
+        _subject: `New Order from ${formData.fullName} - $${Math.round(total)}`,
       };
 
       // Send to Formspree
@@ -207,7 +207,7 @@ export default function OrderForm() {
                       {item.traySize} Tray
                     </span>
                   </p>
-                  <p className="text-sm font-bold text-gold-700">${item.price.toFixed(2)}</p>
+                  <p className="text-sm font-bold text-gold-700">${Math.round(item.price)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -225,17 +225,17 @@ export default function OrderForm() {
           <div className="mt-6 pt-6 border-t border-warmBrown-200 space-y-3">
             <div className="flex justify-between text-base">
               <span className="font-sans text-warmBrown-700">Subtotal:</span>
-              <span className="font-sans font-semibold text-warmBrown-900">${subtotal.toFixed(2)}</span>
+              <span className="font-sans font-semibold text-warmBrown-900">${Math.round(subtotal)}</span>
             </div>
             {deliveryFee > 0 && (
               <div className="flex justify-between text-base">
                 <span className="font-sans text-warmBrown-700">Delivery Fee:</span>
-                <span className="font-sans font-semibold text-warmBrown-900">${deliveryFee.toFixed(2)}</span>
+                <span className="font-sans font-semibold text-warmBrown-900">${Math.round(deliveryFee)}</span>
               </div>
             )}
             <div className="flex justify-between text-lg pt-3 border-t border-warmBrown-200">
               <span className="font-sans font-bold text-warmBrown-900">Total:</span>
-              <span className="font-sans font-bold text-gold-700 text-2xl">${total.toFixed(2)}</span>
+              <span className="font-sans font-bold text-gold-700 text-2xl">${Math.round(total)}</span>
             </div>
           </div>
 
