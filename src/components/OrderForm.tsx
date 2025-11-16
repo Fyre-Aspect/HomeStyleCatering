@@ -3,6 +3,7 @@
 import React, { useState, FormEvent } from 'react';
 import Image from 'next/image';
 import Button from './Button';
+import OrderSuccess from './OrderSuccess';
 import { useCart } from '@/context/CartContext';
 
 interface FormData {
@@ -40,6 +41,8 @@ export default function OrderForm() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successOrderDetails, setSuccessOrderDetails] = useState<any>(null);
 
   const DELIVERY_FEE = 6.00;
   const subtotal = getSubtotal();
@@ -93,18 +96,21 @@ export default function OrderForm() {
         throw new Error('Failed to submit order');
       }
 
-      // Success notification
-      alert(
-        `Thank you, ${formData.fullName}! Your order has been received.\n\n` +
-        `Order Details:\n${itemsList}\n\n` +
-        `Subtotal: $${subtotal.toFixed(2)}\n` +
-        (deliveryFee > 0 ? `Delivery Fee: $${deliveryFee.toFixed(2)}\n` : '') +
-        `Total: $${total.toFixed(2)}\n\n` +
-        `${formData.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'} scheduled for: ${new Date(formData.orderDate).toLocaleDateString()} at ${formData.orderTime}\n\n` +
-        `We'll contact you via ${formData.contactPreference} shortly!`
-      );
+      // Store order details for success screen
+      setSuccessOrderDetails({
+        customerName: formData.fullName,
+        orderDate: formData.orderDate,
+        orderTime: formData.orderTime,
+        deliveryOption: formData.deliveryOption,
+        deliveryAddress: formData.deliveryAddress,
+        contactPreference: formData.contactPreference,
+        items: [...cart],
+        subtotal,
+        deliveryFee,
+        total,
+      });
 
-      // Reset form
+      // Clear cart and form
       clearCart();
       setFormData({
         fullName: '',
@@ -117,6 +123,9 @@ export default function OrderForm() {
         deliveryOption: 'pickup',
         deliveryAddress: '',
       });
+
+      // Show success screen
+      setShowSuccess(true);
     } catch (error) {
       console.error('Error submitting order:', error);
       alert(
@@ -445,6 +454,14 @@ export default function OrderForm() {
           </p>
         </form>
       </div>
+
+      {/* Success Modal */}
+      {showSuccess && successOrderDetails && (
+        <OrderSuccess
+          orderDetails={successOrderDetails}
+          onClose={() => setShowSuccess(false)}
+        />
+      )}
     </div>
   );
 }
