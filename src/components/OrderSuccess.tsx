@@ -94,7 +94,7 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
               Your Order is Confirmed, {orderDetails.customerName}!
             </p>
             <p className="font-sans text-gold-200 text-sm">
-              We can't wait to serve you delicious homestyle food!
+              We can&apos;t wait to serve you delicious homestyle food!
             </p>
           </div>
         </div>
