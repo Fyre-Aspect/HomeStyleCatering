@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
+  const { getTotalItems } = useCart();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -82,6 +84,30 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Cart Icon */}
+            <Link
+              href="/order"
+              className="relative p-2 text-warmBrown-700 hover:text-gold-700 transition-colors"
+              aria-label="View cart"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -125,6 +151,20 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Mobile Cart Link */}
+            <Link
+              href="/order"
+              className="flex items-center justify-between py-3 px-4 rounded-lg font-medium text-warmBrown-700 hover:bg-warmBrown-100 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span>Cart</span>
+              {getTotalItems() > 0 && (
+                <span className="bg-gold-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
+            </Link>
           </div>
         )}
       </div>
