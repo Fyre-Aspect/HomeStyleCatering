@@ -81,24 +81,6 @@ export const dishes: Dish[] = [
     price: 15.99,
     featured: false,
   },
-  {
-    id: 'cake',
-    name: 'Special Cake',
-    description: 'Delicious homemade cake, moist and flavorful. Perfect for celebrations or a sweet treat.',
-    image: '/images/Cake.jpg',
-    category: 'Dessert',
-    price: 24.99,
-    featured: false,
-  },
-  {
-    id: 'milkshake',
-    name: 'Milkshake',
-    description: 'Thick, creamy milkshake made with premium ingredients. Refreshing and indulgent.',
-    image: '/images/Milkshake.jpg',
-    category: 'Beverage',
-    price: 6.99,
-    featured: false,
-  },
 ];
 
 export const featuredDishes = dishes.filter(dish => dish.featured);

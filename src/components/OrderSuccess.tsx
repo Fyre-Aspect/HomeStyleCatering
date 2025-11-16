@@ -106,8 +106,8 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
               </div>
               <div className="ml-3">
                 <p className="font-sans text-sm text-green-800">
-                  Your order has been successfully placed and we&apos;ve received your request. 
-                  We&apos;ll contact you via {orderDetails.contactPreference} shortly to confirm the details!
+                  Your order has been processed and we&apos;ve received all your details.
+                  We&apos;ll contact you via {orderDetails.contactPreference} shortly to go over everything and finalize the next steps.
                 </p>
               </div>
             </div>

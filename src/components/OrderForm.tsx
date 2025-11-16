@@ -61,6 +61,8 @@ export default function OrderForm() {
     setIsSubmitting(true);
 
     try {
+      // Small delay so the loading state feels intentional
+      await new Promise((resolve) => setTimeout(resolve, 800));
       // Prepare order data for Formspree
       const itemsList = cart.map(item => `${item.dishName} (${item.traySize} Tray) - $${item.price.toFixed(2)}`).join('\n');
       
@@ -124,8 +126,10 @@ export default function OrderForm() {
         deliveryAddress: '',
       });
 
-      // Show success screen
-      setShowSuccess(true);
+      // Show success screen with a slight delay so transition feels smooth
+      setTimeout(() => {
+        setShowSuccess(true);
+      }, 400);
     } catch (error) {
       console.error('Error submitting order:', error);
       alert(
