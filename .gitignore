@@ -11,6 +11,9 @@ pnpm-lock.yaml
 coverage/
 .nyc_output
 *.lcov
+__tests__/
+**/__snapshots__/
+.jest-cache/
 
 # Next.js
 .next/
