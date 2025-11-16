@@ -441,7 +441,7 @@ export default function OrderForm() {
             type="submit"
             variant="primary"
             className="w-full text-lg py-4 disabled:opacity-50 disabled:cursor-not-wait"
-            disabled={isSubmitting}
+            {...({ disabled: isSubmitting } as any)}
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
