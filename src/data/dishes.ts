@@ -49,8 +49,8 @@ export const dishes: Dish[] = [
     featured: true,
   },
   {
-    id: 'sauce-chicken',
-    name: 'Sauce Chicken',
+    id: 'Korma-chicken',
+    name: 'Korma Chicken',
     description: 'Succulent chicken pieces in a flavorful, rich sauce with aromatic spices. A comfort food favorite.',
     image: '/images/Sauce Chicken.jpg',
     category: 'Curries',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useRef } from 'react';
 import Image from 'next/image';
 import Button from './Button';
 import OrderSuccess from './OrderSuccess';
@@ -22,6 +22,27 @@ interface FormData {
 
 export default function OrderForm() {
   const { cart, removeFromCart, updateQuantity, clearCart, getTotalItems, getSubtotal } = useCart();
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
+
+  const openNativeDatePicker = () => {
+    const el = dateInputRef.current;
+    if (!el) return;
+    try {
+      // showPicker is supported on modern Chromium and Safari 16.4+
+      // Fallback to focus+click when not available
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyEl = el as any;
+      if (typeof anyEl.showPicker === 'function') {
+        anyEl.showPicker();
+      } else {
+        el.focus();
+        el.click();
+      }
+    } catch {
+      el.focus();
+      el.click();
+    }
+  };
   
   // Get tomorrow's date as minimum order date
   const getTomorrowDate = () => {
@@ -320,17 +341,25 @@ export default function OrderForm() {
               <label htmlFor="orderDate" className="block font-sans text-sm font-semibold text-warmBrown-800 mb-2">
                 📅 Order Date *
               </label>
-              <input
-                type="date"
-                id="orderDate"
-                name="orderDate"
-                value={formData.orderDate}
-                onChange={handleChange}
-                min={getTomorrowDate()}
-                required
-                className="w-full font-sans px-4 py-3 border-2 border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-all cursor-pointer hover:border-gold-400 bg-white"
-                style={{ colorScheme: 'light' }}
-              />
+              <div
+                className="block cursor-pointer"
+                onClick={openNativeDatePicker}
+                role="button"
+                aria-label="Open date picker"
+              >
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  id="orderDate"
+                  name="orderDate"
+                  value={formData.orderDate}
+                  onChange={handleChange}
+                  min={getTomorrowDate()}
+                  required
+                  className="w-full font-sans px-4 py-3 border-2 border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-all cursor-pointer hover:border-gold-400 bg-white [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100"
+                  style={{ colorScheme: 'light' }}
+                />
+              </div>
               <p className="mt-1 text-xs text-warmBrown-600">Orders require 48 hours notice</p>
             </div>
             <div>

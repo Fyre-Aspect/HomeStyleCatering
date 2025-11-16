@@ -19,14 +19,8 @@ export default function PaymentMethodModal({
   useEffect(() => {
     // Trigger entrance animation
     setTimeout(() => setIsVisible(true), 100);
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.documentElement.style.overflow = 'unset';
-    };
+    // Allow natural scrolling; avoid locking html/body which breaks mobile scroll
+    return () => {};
   }, []);
 
   const handleConfirm = () => {
@@ -39,40 +33,40 @@ export default function PaymentMethodModal({
 
   return (
     <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-sm">
-      <div className="flex min-h-full items-center justify-center p-4 py-8">
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-4 py-4 sm:py-8">
         {/* Modal Container */}
         <div
-          className={`relative bg-white rounded-2xl shadow-2xl w-full max-w-md transition-all duration-300 transform ${
+          className={`relative bg-white rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md transition-all duration-300 transform ${
             isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
           }`}
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-gold-500 to-gold-600 text-white p-6 rounded-t-2xl">
+          <div className="bg-gradient-to-r from-gold-500 to-gold-600 text-white p-4 sm:p-6 rounded-t-2xl">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-white rounded-full mb-3">
-                <span className="text-2xl">💳</span>
+              <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-full mb-2 sm:mb-3">
+                <span className="text-xl sm:text-2xl">💳</span>
               </div>
-              <h2 className="font-display text-2xl font-bold mb-1">
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">
                 Choose Payment Method
               </h2>
-              <p className="font-sans text-gold-100 text-sm">
+              <p className="font-sans text-gold-100 text-xs sm:text-sm">
                 Please select how you'd like to pay for your order
               </p>
             </div>
           </div>
 
           {/* Content */}
-          <div className="p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             {/* Order Total Display */}
-            <div className="bg-warmBrown-50 rounded-xl p-4 border border-warmBrown-200 text-center">
-              <p className="font-sans text-warmBrown-700 text-sm mb-1">Order Total</p>
-              <p className="font-display text-3xl font-bold text-gold-700">
+            <div className="bg-warmBrown-50 rounded-xl p-3 sm:p-4 border border-warmBrown-200 text-center">
+              <p className="font-sans text-warmBrown-700 text-xs sm:text-sm mb-1">Order Total</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold-700">
                 ${Math.round(total)}
               </p>
             </div>
 
             {/* Payment Options */}
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {/* Cash Option */}
               <button
                 onClick={() => setSelectedMethod('cash')}
@@ -152,12 +146,12 @@ export default function PaymentMethodModal({
             </div>
 
             {/* Important Note */}
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-lg">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-2.5 sm:p-3 rounded-r-lg">
               <div className="flex items-start gap-2">
-                <svg className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <p className="font-sans text-sm text-blue-800">
+                <p className="font-sans text-xs sm:text-sm text-blue-800">
                   <strong>Note:</strong> You must select a payment method to continue. We'll confirm your order details shortly after submission.
                 </p>
               </div>
@@ -167,7 +161,7 @@ export default function PaymentMethodModal({
             <button
               onClick={handleConfirm}
               disabled={!selectedMethod}
-              className={`w-full font-sans font-bold text-base py-3.5 px-6 rounded-xl transition-all duration-200 ${
+              className={`w-full font-sans font-bold text-sm sm:text-base py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl transition-all duration-200 ${
                 selectedMethod
                   ? 'bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white shadow-lg hover:shadow-xl active:scale-[0.98]'
                   : 'bg-warmBrown-200 text-warmBrown-400 cursor-not-allowed'
@@ -175,7 +169,7 @@ export default function PaymentMethodModal({
             >
               {selectedMethod ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                   Confirm & Place Order
@@ -185,7 +179,7 @@ export default function PaymentMethodModal({
               )}
             </button>
 
-            <p className="text-center font-sans text-xs text-warmBrown-500">
+            <p className="text-center font-sans text-[10px] sm:text-xs text-warmBrown-500">
               🔒 Your information is secure and will only be used to process your order
             </p>
           </div>

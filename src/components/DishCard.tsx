@@ -25,7 +25,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
       'lamb-biryani': 130,
       'veg-biryani': 95,
       'butter-chicken': 75,
-      'sauce-chicken': 75,
+      'Korma Chicken': 75,
       'haleem': 80,
     };
     
