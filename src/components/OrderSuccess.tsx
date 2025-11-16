@@ -152,9 +152,9 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
               Order Summary
             </h3>
             <div className="space-y-3">
-              {orderDetails.items.map((item) => (
+              {orderDetails.items.map((item, index) => (
                 <div
-                  key={item.dishId}
+                  key={`${item.dishId}-${item.traySize}-${index}`}
                   className="flex items-center justify-between p-3 bg-warmBrown-50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
@@ -170,12 +170,14 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
                         {item.dishName}
                       </p>
                       <p className="font-sans text-sm text-warmBrown-600">
-                        Qty: {item.quantity} × ${item.price.toFixed(2)}
+                        <span className="inline-block bg-gold-100 text-gold-800 px-2 py-0.5 rounded text-xs font-semibold">
+                          {item.traySize} Tray
+                        </span>
                       </p>
                     </div>
                   </div>
                   <p className="font-sans font-bold text-gold-700">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${item.price.toFixed(2)}
                   </p>
                 </div>
               ))}

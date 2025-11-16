@@ -12,20 +12,28 @@ interface DishCardProps {
 
 export default function DishCard({ dish, showOrderButton = true }: DishCardProps) {
   const { addToCart } = useCart();
-  const [quantity, setQuantity] = useState(1);
+  const [traySize, setTraySize] = useState<'Small' | 'Medium' | 'Large'>('Medium');
   const [justAdded, setJustAdded] = useState(false);
+
+  const traySizeMultiplier = {
+    Small: 1,
+    Medium: 1.5,
+    Large: 2.5
+  };
+
+  const trayPrice = dish.price * traySizeMultiplier[traySize];
 
   const handleAddToCart = () => {
     addToCart({
       dishId: dish.id,
       dishName: dish.name,
-      quantity,
+      quantity: 1,
+      traySize,
       image: dish.image,
-      price: dish.price,
+      price: trayPrice,
     });
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 2000);
-    setQuantity(1);
   };
 
   return (
@@ -55,26 +63,53 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
           {dish.description}
         </p>
         <div className="mb-4">
+          <p className="text-sm text-warmBrown-600 mb-1">Starting from</p>
           <span className="text-2xl font-bold text-gold-700">${dish.price.toFixed(2)}</span>
         </div>
         
         {showOrderButton && (
           <div className="space-y-3">
-            {/* Quantity Selector */}
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-8 h-8 rounded-full bg-warmBrown-200 hover:bg-warmBrown-300 flex items-center justify-center transition-all active:scale-90 font-bold"
-              >
-                −
-              </button>
-              <span className="font-semibold text-lg w-8 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-8 h-8 rounded-full bg-warmBrown-200 hover:bg-warmBrown-300 flex items-center justify-center transition-all active:scale-90 font-bold"
-              >
-                +
-              </button>
+            {/* Tray Size Selector */}
+            <div>
+              <label className="block text-sm font-semibold text-warmBrown-800 mb-2">Select Tray Size:</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setTraySize('Small')}
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    traySize === 'Small'
+                      ? 'bg-gold-600 text-white shadow-lg'
+                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
+                  }`}
+                >
+                  Small
+                  <div className="text-xs">${dish.price.toFixed(2)}</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTraySize('Medium')}
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    traySize === 'Medium'
+                      ? 'bg-gold-600 text-white shadow-lg'
+                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
+                  }`}
+                >
+                  Medium
+                  <div className="text-xs">${(dish.price * 1.5).toFixed(2)}</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTraySize('Large')}
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    traySize === 'Large'
+                      ? 'bg-gold-600 text-white shadow-lg'
+                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
+                  }`}
+                >
+                  Large
+                  <div className="text-xs">${(dish.price * 2.5).toFixed(2)}</div>
+                </button>
+              </div>
             </div>
 
             {/* Add to Cart Button */}

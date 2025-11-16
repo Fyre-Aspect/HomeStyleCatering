@@ -62,7 +62,7 @@ export default function OrderForm() {
 
     try {
       // Prepare order data for Formspree
-      const itemsList = cart.map(item => `${item.dishName} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+      const itemsList = cart.map(item => `${item.dishName} (${item.traySize} Tray) - $${item.price.toFixed(2)}`).join('\n');
       
       const orderData = {
         fullName: formData.fullName,
@@ -184,9 +184,9 @@ export default function OrderForm() {
           </div>
 
           <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-            {cart.map((item) => (
+            {cart.map((item, index) => (
               <div
-                key={item.dishId}
+                key={`${item.dishId}-${item.traySize}-${index}`}
                 className="flex items-center gap-4 p-4 bg-warmBrown-50 rounded-lg border border-warmBrown-200 transition-all hover:shadow-md"
               >
                 <Image
@@ -198,26 +198,18 @@ export default function OrderForm() {
                 />
                 <div className="flex-1">
                   <h5 className="font-sans font-semibold text-warmBrown-900">{item.dishName}</h5>
-                  <p className="text-sm text-warmBrown-600">${item.price.toFixed(2)} each</p>
-                  <p className="text-sm font-bold text-gold-700">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="text-sm text-warmBrown-600">
+                    <span className="inline-block bg-gold-100 text-gold-800 px-2 py-0.5 rounded text-xs font-semibold mr-1">
+                      {item.traySize} Tray
+                    </span>
+                  </p>
+                  <p className="text-sm font-bold text-gold-700">${item.price.toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => updateQuantity(item.dishId, item.quantity - 1)}
-                    className="w-8 h-8 rounded-full bg-warmBrown-200 hover:bg-warmBrown-300 flex items-center justify-center transition-all active:scale-90 font-sans font-bold"
-                  >
-                    −
-                  </button>
-                  <span className="font-sans font-semibold text-base w-8 text-center">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.dishId, item.quantity + 1)}
-                    className="w-8 h-8 rounded-full bg-warmBrown-200 hover:bg-warmBrown-300 flex items-center justify-center transition-all active:scale-90 font-sans font-bold"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() => removeFromCart(item.dishId)}
-                    className="ml-2 text-deepRed-600 hover:text-deepRed-700 font-bold transition-all active:scale-90"
+                    onClick={() => removeFromCart(item.dishId, item.traySize)}
+                    className="text-deepRed-600 hover:text-deepRed-700 font-bold transition-all active:scale-90 hover:bg-deepRed-50 p-2 rounded-lg"
+                    title="Remove from cart"
                   >
                     🗑️
                   </button>
@@ -444,9 +436,25 @@ export default function OrderForm() {
           <Button
             type="submit"
             variant="primary"
-            className="w-full text-lg py-4"
+            className="w-full text-lg py-4 disabled:opacity-50 disabled:cursor-not-wait"
+            disabled={isSubmitting}
           >
-            {isSubmitting ? 'Placing Order...' : '✓ Complete Order'}
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Placing Order...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Complete Order
+              </span>
+            )}
           </Button>
 
           <p className="text-sm text-warmBrown-500 text-center">

@@ -6,6 +6,7 @@ export interface CartItem {
   dishId: string;
   dishName: string;
   quantity: number;
+  traySize: 'Small' | 'Medium' | 'Large';
   image: string;
   price: number;
 }
@@ -13,7 +14,7 @@ export interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (dishId: string) => void;
+  removeFromCart: (dishId: string, traySize?: string) => void;
   updateQuantity: (dishId: string, quantity: number) => void;
   clearCart: () => void;
   getTotalItems: () => number;
@@ -27,11 +28,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (item: CartItem) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(i => i.dishId === item.dishId);
+      // Check if same dish with same tray size exists
+      const existingItem = prevCart.find(i => i.dishId === item.dishId && i.traySize === item.traySize);
       
       if (existingItem) {
         return prevCart.map(i =>
-          i.dishId === item.dishId
+          i.dishId === item.dishId && i.traySize === item.traySize
             ? { ...i, quantity: i.quantity + item.quantity }
             : i
         );
@@ -41,8 +43,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (dishId: string) => {
-    setCart(prevCart => prevCart.filter(item => item.dishId !== dishId));
+  const removeFromCart = (dishId: string, traySize?: string) => {
+    setCart(prevCart => prevCart.filter(item => !(item.dishId === dishId && (!traySize || item.traySize === traySize))));
   };
 
   const updateQuantity = (dishId: string, quantity: number) => {
