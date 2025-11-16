@@ -50,7 +50,7 @@ export default function PaymentMethodModal({
                 Choose Payment Method
               </h2>
               <p className="font-sans text-gold-100 text-xs sm:text-sm">
-                Please select how you'd like to pay for your order
+                Please select how you&apos;d like to pay for your order
               </p>
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function PaymentMethodModal({
                       E-Transfer
                     </h3>
                     <p className="font-sans text-sm text-warmBrown-700">
-                      Pay securely online via Interac e-Transfer. You'll receive payment instructions after confirming your order.
+                      Pay securely online via Interac e-Transfer. You&apos;ll receive payment instructions after confirming your order.
                     </p>
                     <div className="mt-2 inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-semibold">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -152,7 +152,7 @@ export default function PaymentMethodModal({
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 <p className="font-sans text-xs sm:text-sm text-blue-800">
-                  <strong>Note:</strong> You must select a payment method to continue. We'll confirm your order details shortly after submission.
+                  <strong>Note:</strong> You must select a payment method to continue. We&apos;ll confirm your order details shortly after submission.
                 </p>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Button from './Button';
 import { CartItem } from '@/context/CartContext';
 
@@ -181,7 +182,7 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
                         </p>
                       </div>
                       <p className="text-xs text-warmBrown-600">
-                        ℹ️ We'll confirm receipt of your payment shortly.
+                        ℹ️ We&apos;ll confirm receipt of your payment shortly.
                       </p>
                     </div>
                   )}
@@ -202,11 +203,12 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
                   className="flex items-center justify-between p-3 bg-warmBrown-50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden">
-                      <img
+                    <div className="w-12 h-12 rounded-lg overflow-hidden relative">
+                      <Image
                         src={item.image}
                         alt={item.dishName}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     </div>
                     <div>

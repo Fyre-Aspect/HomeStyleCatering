@@ -20,8 +20,29 @@ interface FormData {
   paymentMethod: 'cash' | 'etransfer';
 }
 
+interface OrderDetails {
+  customerName: string;
+  orderDate: string;
+  orderTime: string;
+  deliveryOption: 'pickup' | 'delivery';
+  deliveryAddress: string;
+  contactPreference: 'email' | 'phone';
+  paymentMethod: 'cash' | 'etransfer';
+  items: Array<{
+    dishId: string;
+    dishName: string;
+    quantity: number;
+    traySize: 'Regular' | 'Large';
+    image: string;
+    price: number;
+  }>;
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+}
+
 export default function OrderForm() {
-  const { cart, removeFromCart, updateQuantity, clearCart, getTotalItems, getSubtotal } = useCart();
+  const { cart, removeFromCart, clearCart, getTotalItems, getSubtotal } = useCart();
   const dateInputRef = useRef<HTMLInputElement | null>(null);
 
   const openNativeDatePicker = () => {
@@ -67,7 +88,7 @@ export default function OrderForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [successOrderDetails, setSuccessOrderDetails] = useState<any>(null);
+  const [successOrderDetails, setSuccessOrderDetails] = useState<OrderDetails | null>(null);
 
   const DELIVERY_FEE = 6.00;
   const subtotal = getSubtotal();
@@ -75,7 +96,7 @@ export default function OrderForm() {
   const total = subtotal + deliveryFee;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -370,7 +391,7 @@ export default function OrderForm() {
                 id="orderTime"
                 name="orderTime"
                 value={formData.orderTime}
-                onChange={handleChange as any}
+                onChange={handleChange}
                 required
                 className="w-full font-sans px-4 py-3 border-2 border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-all cursor-pointer hover:border-gold-400 bg-white appearance-none"
                 style={{
@@ -405,7 +426,7 @@ export default function OrderForm() {
                 <option value="19:30">7:30 PM</option>
                 <option value="20:00">8:00 PM</option>
               </select>
-              <p className="mt-1 text-xs text-warmBrown-600">Approximate time - we'll confirm</p>
+              <p className="mt-1 text-xs text-warmBrown-600">Approximate time - we&apos;ll confirm</p>
             </div>
           </div>
 
@@ -514,11 +535,10 @@ export default function OrderForm() {
             </div>
           </div>
 
-          <Button
+          <button
             type="submit"
-            variant="primary"
-            className="w-full text-lg py-4 disabled:opacity-50 disabled:cursor-not-wait"
-            {...({ disabled: isSubmitting } as any)}
+            disabled={isSubmitting}
+            className="w-full text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed inline-block font-semibold rounded-lg transition-all duration-200 text-center active:scale-95 hover:scale-105 bg-gold-600 hover:bg-gold-700 text-white shadow-lg hover:shadow-xl"
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
@@ -536,7 +556,7 @@ export default function OrderForm() {
                 Continue to Payment
               </span>
             )}
-          </Button>
+          </button>
 
           <p className="text-sm text-warmBrown-500 text-center">
             * Required fields
