@@ -9,6 +9,17 @@ interface MenuGridProps {
 }
 
 export default function MenuGrid({ dishes, title, subtitle }: MenuGridProps) {
+  // Group dishes by category in the specified order
+  const categoryOrder = ['Biryani', 'Curries', 'Appetizers', 'Desserts'];
+  
+  const dishesByCategory = categoryOrder.reduce((acc, category) => {
+    const categoryDishes = dishes.filter(dish => dish.category === category);
+    if (categoryDishes.length > 0) {
+      acc[category] = categoryDishes;
+    }
+    return acc;
+  }, {} as Record<string, Dish[]>);
+
   return (
     <section className="py-16">
       <div className="container-custom">
@@ -19,11 +30,19 @@ export default function MenuGrid({ dishes, title, subtitle }: MenuGridProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {dishes.map((dish) => (
-            <DishCard key={dish.id} dish={dish} />
-          ))}
-        </div>
+        {/* Render dishes grouped by category */}
+        {Object.entries(dishesByCategory).map(([category, categoryDishes]) => (
+          <div key={category} className="mb-16">
+            <h3 className="font-display text-3xl font-bold text-warmBrown-900 mb-8 text-center">
+              {category}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {categoryDishes.map((dish) => (
+                <DishCard key={dish.id} dish={dish} />
+              ))}
+            </div>
+          </div>
+        ))}
 
         {dishes.length === 0 && (
           <div className="text-center py-12">

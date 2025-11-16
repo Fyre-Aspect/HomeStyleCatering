@@ -6,7 +6,7 @@ export interface CartItem {
   dishId: string;
   dishName: string;
   quantity: number;
-  traySize: 'Small' | 'Medium' | 'Large';
+  traySize: 'Regular' | 'Large';
   image: string;
   price: number;
 }

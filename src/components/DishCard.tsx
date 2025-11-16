@@ -12,13 +12,12 @@ interface DishCardProps {
 
 export default function DishCard({ dish, showOrderButton = true }: DishCardProps) {
   const { addToCart } = useCart();
-  const [traySize, setTraySize] = useState<'Small' | 'Medium' | 'Large'>('Medium');
+  const [traySize, setTraySize] = useState<'Regular' | 'Large'>('Regular');
   const [justAdded, setJustAdded] = useState(false);
 
   const traySizeMultiplier = {
-    Small: 1,
-    Medium: 1.5,
-    Large: 2.5
+    Regular: 1,
+    Large: 2.24 // For chicken biryani: $49 * 2.24 ≈ $110
   };
 
   const trayPrice = dish.price * traySizeMultiplier[traySize];
@@ -72,42 +71,32 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
             {/* Tray Size Selector */}
             <div>
               <label className="block text-sm font-semibold text-warmBrown-800 mb-2">Select Tray Size:</label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => setTraySize('Small')}
-                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
-                    traySize === 'Small'
+                  onClick={() => setTraySize('Regular')}
+                  className={`py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
+                    traySize === 'Regular'
                       ? 'bg-gold-600 text-white shadow-lg'
                       : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
                   }`}
                 >
-                  Small
-                  <div className="text-xs">${dish.price.toFixed(2)}</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTraySize('Medium')}
-                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
-                    traySize === 'Medium'
-                      ? 'bg-gold-600 text-white shadow-lg'
-                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
-                  }`}
-                >
-                  Medium
-                  <div className="text-xs">${(dish.price * 1.5).toFixed(2)}</div>
+                  Regular
+                  <div className="text-xs mt-1">(4-5 people)</div>
+                  <div className="text-xs font-bold mt-0.5">${dish.price.toFixed(2)}</div>
                 </button>
                 <button
                   type="button"
                   onClick={() => setTraySize('Large')}
-                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                  className={`py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
                     traySize === 'Large'
                       ? 'bg-gold-600 text-white shadow-lg'
                       : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
                   }`}
                 >
                   Large
-                  <div className="text-xs">${(dish.price * 2.5).toFixed(2)}</div>
+                  <div className="text-xs mt-1">(6+ people)</div>
+                  <div className="text-xs font-bold mt-0.5">${(dish.price * 2.24).toFixed(2)}</div>
                 </button>
               </div>
             </div>

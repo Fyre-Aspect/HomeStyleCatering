@@ -388,7 +388,7 @@ export default function OrderForm() {
 
           <div className="bg-gold-50 border-l-4 border-gold-600 p-4 rounded-r-lg">
             <p className="text-sm text-warmBrown-700">
-              <strong>Please note:</strong> Orders must be placed at least 24 hours in advance. We&apos;ll confirm availability and exact timing after receiving your order.
+              <strong>Please note:</strong> Orders must be placed at least 48 hours in advance. We&apos;ll confirm availability and exact timing after receiving your order.
             </p>
           </div>
 
