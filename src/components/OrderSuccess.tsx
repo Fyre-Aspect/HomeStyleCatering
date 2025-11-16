@@ -12,6 +12,7 @@ interface OrderSuccessProps {
     deliveryOption: 'pickup' | 'delivery';
     deliveryAddress?: string;
     contactPreference: 'email' | 'phone';
+    paymentMethod: 'cash' | 'etransfer';
     items: CartItem[];
     subtotal: number;
     deliveryFee: number;
@@ -86,10 +87,13 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
             </div>
             
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">
-              Order Confirmed!
+              🎉 Congratulations!
             </h2>
-            <p className="font-sans text-gold-100 text-lg">
-              Thank you, {orderDetails.customerName}!
+            <p className="font-sans text-gold-100 text-lg mb-1">
+              Your Order is Confirmed, {orderDetails.customerName}!
+            </p>
+            <p className="font-sans text-gold-200 text-sm">
+              We can't wait to serve you delicious homestyle food!
             </p>
           </div>
         </div>
@@ -143,6 +147,46 @@ export default function OrderSuccess({ orderDetails, onClose }: OrderSuccessProp
                   <span className="font-semibold">Address:</span> {orderDetails.deliveryAddress}
                 </p>
               )}
+            </div>
+          </div>
+
+          {/* Payment Information */}
+          <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+            <h3 className="font-display text-xl font-bold text-warmBrown-900 mb-4 flex items-center gap-2">
+              <span>💳</span> Payment Information
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg">
+                  {orderDetails.paymentMethod === 'cash' ? '💵' : '📧'}
+                </div>
+                <div className="flex-1">
+                  <p className="font-sans font-semibold text-warmBrown-900 mb-1">
+                    {orderDetails.paymentMethod === 'cash' 
+                      ? `Cash at ${orderDetails.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'}` 
+                      : 'E-Transfer'}
+                  </p>
+                  {orderDetails.paymentMethod === 'cash' ? (
+                    <p className="text-sm text-warmBrown-700">
+                      Please have <span className="font-bold text-gold-700">${Math.round(orderDetails.total)}</span> ready when you {orderDetails.deliveryOption === 'delivery' ? 'receive your delivery' : 'pick up your order'}.
+                    </p>
+                  ) : (
+                    <div className="text-sm text-warmBrown-700 space-y-2">
+                      <p>
+                        Please send <span className="font-bold text-gold-700">${Math.round(orderDetails.total)}</span> via e-transfer to:
+                      </p>
+                      <div className="bg-white rounded-lg p-3 border border-blue-300">
+                        <p className="font-mono font-semibold text-blue-700 break-all">
+                          homestylecateringkwc@gmail.com
+                        </p>
+                      </div>
+                      <p className="text-xs text-warmBrown-600">
+                        ℹ️ We'll confirm receipt of your payment shortly.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

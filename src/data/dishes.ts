@@ -16,7 +16,7 @@ export const dishes: Dish[] = [
     description: 'Authentic aromatic rice dish layered with tender chicken, fragrant spices, and saffron. A traditional homestyle delicacy.',
     image: '/images/Chicken Biryani.jpg',
     category: 'Biryani',
-    price: 58,
+    price: 59,
     featured: true,
   },
   {
@@ -34,7 +34,7 @@ export const dishes: Dish[] = [
     description: 'A delightful medley of fresh vegetables and fragrant basmati rice, perfectly spiced and aromatic.',
     image: '/images/Veg Biryani.png',
     category: 'Biryani',
-    price: 53,
+    price: 52,
     featured: false,
   },
   

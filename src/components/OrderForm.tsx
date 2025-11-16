@@ -16,6 +16,7 @@ interface FormData {
   contactPreference: 'email' | 'phone';
   deliveryOption: 'pickup' | 'delivery';
   deliveryAddress: string;
+  paymentMethod: 'cash' | 'etransfer';
 }
 
 export default function OrderForm() {
@@ -38,6 +39,7 @@ export default function OrderForm() {
     contactPreference: 'email',
     deliveryOption: 'pickup',
     deliveryAddress: '',
+    paymentMethod: 'cash',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,6 +77,7 @@ export default function OrderForm() {
         contactPreference: formData.contactPreference,
         deliveryOption: formData.deliveryOption,
         deliveryAddress: formData.deliveryOption === 'delivery' ? formData.deliveryAddress : 'N/A - Pickup',
+        paymentMethod: formData.paymentMethod === 'cash' ? 'Cash at Pickup/Delivery' : 'E-Transfer',
         notes: formData.notes,
         orderItems: itemsList,
         totalItems: getTotalItems(),
@@ -106,6 +109,7 @@ export default function OrderForm() {
         deliveryOption: formData.deliveryOption,
         deliveryAddress: formData.deliveryAddress,
         contactPreference: formData.contactPreference,
+        paymentMethod: formData.paymentMethod,
         items: [...cart],
         subtotal,
         deliveryFee,
@@ -124,6 +128,7 @@ export default function OrderForm() {
         contactPreference: 'email',
         deliveryOption: 'pickup',
         deliveryAddress: '',
+        paymentMethod: 'cash',
       });
 
       // Show success screen with a slight delay so transition feels smooth
@@ -303,7 +308,7 @@ export default function OrderForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="orderDate" className="block font-sans text-sm font-semibold text-warmBrown-800 mb-2">
-                Order Date *
+                📅 Order Date *
               </label>
               <input
                 type="date"
@@ -313,22 +318,55 @@ export default function OrderForm() {
                 onChange={handleChange}
                 min={getTomorrowDate()}
                 required
-                className="w-full font-sans px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
+                className="w-full font-sans px-4 py-3 border-2 border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-all cursor-pointer hover:border-gold-400 bg-white"
+                style={{ colorScheme: 'light' }}
               />
+              <p className="mt-1 text-xs text-warmBrown-600">Orders require 48 hours notice</p>
             </div>
             <div>
               <label htmlFor="orderTime" className="block font-sans text-sm font-semibold text-warmBrown-800 mb-2">
-                Preferred Time *
+                🕐 Preferred Time *
               </label>
-              <input
-                type="time"
+              <select
                 id="orderTime"
                 name="orderTime"
                 value={formData.orderTime}
-                onChange={handleChange}
+                onChange={handleChange as any}
                 required
-                className="w-full px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
-              />
+                className="w-full font-sans px-4 py-3 border-2 border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 transition-all cursor-pointer hover:border-gold-400 bg-white appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b5b4d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '2.5rem'
+                }}
+              >
+                <option value="09:00">9:00 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="16:30">4:30 PM</option>
+                <option value="17:00">5:00 PM</option>
+                <option value="17:30">5:30 PM</option>
+                <option value="18:00">6:00 PM</option>
+                <option value="18:30">6:30 PM</option>
+                <option value="19:00">7:00 PM</option>
+                <option value="19:30">7:30 PM</option>
+                <option value="20:00">8:00 PM</option>
+              </select>
+              <p className="mt-1 text-xs text-warmBrown-600">Approximate time - we'll confirm</p>
             </div>
           </div>
 
@@ -405,6 +443,50 @@ export default function OrderForm() {
               className="w-full px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all resize-none"
               placeholder="Any allergies or special requests?"
             />
+          </div>
+
+          <div>
+            <label className="block font-sans text-sm font-semibold text-warmBrown-800 mb-3">
+              💳 Payment Method *
+            </label>
+            <div className="space-y-3">
+              <label className="flex items-start p-4 border-2 border-warmBrown-300 rounded-lg cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-all group">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cash"
+                  checked={formData.paymentMethod === 'cash'}
+                  onChange={handleChange}
+                  className="w-5 h-5 text-gold-600 focus:ring-gold-500 mt-0.5 flex-shrink-0"
+                />
+                <div className="ml-3 flex-1">
+                  <span className="font-sans font-semibold text-warmBrown-900 group-hover:text-gold-700 transition-colors block mb-1">
+                    💵 Cash at {formData.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'}
+                  </span>
+                  <span className="text-sm text-warmBrown-600">
+                    Pay when you receive your order
+                  </span>
+                </div>
+              </label>
+              <label className="flex items-start p-4 border-2 border-warmBrown-300 rounded-lg cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-all group">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="etransfer"
+                  checked={formData.paymentMethod === 'etransfer'}
+                  onChange={handleChange}
+                  className="w-5 h-5 text-gold-600 focus:ring-gold-500 mt-0.5 flex-shrink-0"
+                />
+                <div className="ml-3 flex-1">
+                  <span className="font-sans font-semibold text-warmBrown-900 group-hover:text-gold-700 transition-colors block mb-1">
+                    📧 E-Transfer
+                  </span>
+                  <span className="text-sm text-warmBrown-600">
+                    Instructions will be provided after order confirmation
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
 
           <div>

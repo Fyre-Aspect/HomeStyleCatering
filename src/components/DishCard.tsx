@@ -15,12 +15,22 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
   const [traySize, setTraySize] = useState<'Regular' | 'Large'>('Regular');
   const [justAdded, setJustAdded] = useState(false);
 
-  const traySizeMultiplier = {
-    Regular: 1,
-    Large: 2.24 // For chicken biryani: $49 * 2.24 ≈ $110
+  // Different pricing for different dishes
+  const getPriceForSize = (size: 'Regular' | 'Large') => {
+    if (size === 'Regular') return dish.price;
+    
+    // Large tray prices
+    const largePrices: { [key: string]: number } = {
+      'chicken-biryani': 109,
+      'lamb-biryani': 130,
+      'veg-biryani': 95,
+    };
+    
+    // If dish has specific large price, use it; otherwise use multiplier
+    return largePrices[dish.id] || dish.price * 2.24;
   };
 
-  const trayPrice = dish.price * traySizeMultiplier[traySize];
+  const trayPrice = getPriceForSize(traySize);
 
   const handleAddToCart = () => {
     addToCart({
@@ -96,7 +106,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
                 >
                   Large
                   <div className="text-xs mt-1">(6+ people)</div>
-                  <div className="text-xs font-bold mt-0.5">${Math.round(dish.price * 2.24)}</div>
+                  <div className="text-xs font-bold mt-0.5">${Math.round(getPriceForSize('Large'))}</div>
                 </button>
               </div>
             </div>
