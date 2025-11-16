@@ -86,6 +86,15 @@ export const dishes: Dish[] = [
     price: 35,
     featured: false,
   },
+  {
+    id: 'beda-kheema-roti',
+    name: 'Beda Kheema Roti',
+    description: 'Mumbai Style spiced minced meat wrapped in flaky, layered roti. Street food perfection with bold flavors.',
+    image: '/images/Beda Keema.jpg',
+    category: 'Appetizers',
+    price: 39,
+    featured: false,
+  },
   
   // Desserts
   {

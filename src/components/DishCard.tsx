@@ -27,6 +27,7 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
       'butter-chicken': 75,
       'Korma Chicken': 75,
       'haleem': 80,
+      'beda-kheema-roti': 59,
     };
     
     // If dish has specific large price, use it; otherwise use multiplier
