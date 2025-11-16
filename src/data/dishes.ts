@@ -45,7 +45,7 @@ export const dishes: Dish[] = [
     description: 'Creamy, rich tomato-based curry with tender chicken pieces. A beloved classic that melts in your mouth.',
     image: '/images/Butter chicken.jpg',
     category: 'Curries',
-    price: 76,
+    price: 55,
     featured: true,
   },
   {
@@ -54,7 +54,7 @@ export const dishes: Dish[] = [
     description: 'Succulent chicken pieces in a flavorful, rich sauce with aromatic spices. A comfort food favorite.',
     image: '/images/Sauce Chicken.jpg',
     category: 'Curries',
-    price: 76,
+    price: 55,
     featured: false,
   },
   {
@@ -63,7 +63,7 @@ export const dishes: Dish[] = [
     description: 'A rich, slow-cooked stew of meat, lentils, and wheat. Traditional comfort food with incredible depth of flavor.',
     image: '/images/Haleem.jpg',
     category: 'Curries',
-    price: 76,
+    price: 60,
     featured: false,
   },
   

@@ -24,6 +24,9 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
       'chicken-biryani': 109,
       'lamb-biryani': 130,
       'veg-biryani': 95,
+      'butter-chicken': 75,
+      'sauce-chicken': 75,
+      'haleem': 80,
     };
     
     // If dish has specific large price, use it; otherwise use multiplier

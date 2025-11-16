@@ -4,6 +4,7 @@ import React, { useState, FormEvent } from 'react';
 import Image from 'next/image';
 import Button from './Button';
 import OrderSuccess from './OrderSuccess';
+import PaymentMethodModal from './PaymentMethodModal';
 import { useCart } from '@/context/CartContext';
 
 interface FormData {
@@ -44,6 +45,7 @@ export default function OrderForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [successOrderDetails, setSuccessOrderDetails] = useState<any>(null);
 
   const DELIVERY_FEE = 6.00;
@@ -60,6 +62,14 @@ export default function OrderForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    
+    // Show payment modal instead of immediately submitting
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSelection = async (paymentMethod: 'cash' | 'etransfer') => {
+    // Close payment modal
+    setShowPaymentModal(false);
     setIsSubmitting(true);
 
     try {
@@ -77,7 +87,7 @@ export default function OrderForm() {
         contactPreference: formData.contactPreference,
         deliveryOption: formData.deliveryOption,
         deliveryAddress: formData.deliveryOption === 'delivery' ? formData.deliveryAddress : 'N/A - Pickup',
-        paymentMethod: formData.paymentMethod === 'cash' ? 'Cash at Pickup/Delivery' : 'E-Transfer',
+        paymentMethod: paymentMethod === 'cash' ? `Cash at ${formData.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'}` : 'E-Transfer',
         notes: formData.notes,
         orderItems: itemsList,
         totalItems: getTotalItems(),
@@ -109,7 +119,7 @@ export default function OrderForm() {
         deliveryOption: formData.deliveryOption,
         deliveryAddress: formData.deliveryAddress,
         contactPreference: formData.contactPreference,
-        paymentMethod: formData.paymentMethod,
+        paymentMethod: paymentMethod,
         items: [...cart],
         subtotal,
         deliveryFee,
@@ -446,50 +456,6 @@ export default function OrderForm() {
           </div>
 
           <div>
-            <label className="block font-sans text-sm font-semibold text-warmBrown-800 mb-3">
-              💳 Payment Method *
-            </label>
-            <div className="space-y-3">
-              <label className="flex items-start p-4 border-2 border-warmBrown-300 rounded-lg cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-all group">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="cash"
-                  checked={formData.paymentMethod === 'cash'}
-                  onChange={handleChange}
-                  className="w-5 h-5 text-gold-600 focus:ring-gold-500 mt-0.5 flex-shrink-0"
-                />
-                <div className="ml-3 flex-1">
-                  <span className="font-sans font-semibold text-warmBrown-900 group-hover:text-gold-700 transition-colors block mb-1">
-                    💵 Cash at {formData.deliveryOption === 'delivery' ? 'Delivery' : 'Pickup'}
-                  </span>
-                  <span className="text-sm text-warmBrown-600">
-                    Pay when you receive your order
-                  </span>
-                </div>
-              </label>
-              <label className="flex items-start p-4 border-2 border-warmBrown-300 rounded-lg cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-all group">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="etransfer"
-                  checked={formData.paymentMethod === 'etransfer'}
-                  onChange={handleChange}
-                  className="w-5 h-5 text-gold-600 focus:ring-gold-500 mt-0.5 flex-shrink-0"
-                />
-                <div className="ml-3 flex-1">
-                  <span className="font-sans font-semibold text-warmBrown-900 group-hover:text-gold-700 transition-colors block mb-1">
-                    📧 E-Transfer
-                  </span>
-                  <span className="text-sm text-warmBrown-600">
-                    Instructions will be provided after order confirmation
-                  </span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <div>
             <label className="block text-sm font-semibold text-warmBrown-800 mb-3">
               Preferred Contact Method *
             </label>
@@ -536,9 +502,9 @@ export default function OrderForm() {
             ) : (
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-                Complete Order
+                Continue to Payment
               </span>
             )}
           </Button>
@@ -548,6 +514,15 @@ export default function OrderForm() {
           </p>
         </form>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <PaymentMethodModal
+          deliveryOption={formData.deliveryOption}
+          total={total}
+          onSelectPayment={handlePaymentSelection}
+        />
+      )}
 
       {/* Success Modal */}
       {showSuccess && successOrderDetails && (
