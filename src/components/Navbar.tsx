@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import SignInButton from './SignInButton';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -108,6 +109,9 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+
+            {/* Sign In Button */}
+            <SignInButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -165,6 +169,10 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+            
+            <div className="px-4 py-3 border-t border-warmBrown-100 mt-2">
+              <SignInButton />
+            </div>
           </div>
         )}
       </div>

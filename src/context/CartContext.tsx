@@ -1,6 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/utils/firebase';
+import { useAuth } from './AuthContext';
 
 export interface CartItem {
   dishId: string;
@@ -26,6 +29,51 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { user } = useAuth();
+
+  // Load cart from Firestore when user logs in
+  useEffect(() => {
+    const loadCart = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists() && docSnap.data().cart) {
+            // If user has a saved cart, load it
+            // Optional: Merge with current local cart if needed, but for now we'll just load the saved one
+            // to ensure consistency across devices.
+            setCart(docSnap.data().cart);
+          }
+        } catch (error) {
+          console.error("Error loading cart:", error);
+        }
+      }
+    };
+
+    loadCart();
+  }, [user]);
+
+  // Save cart to Firestore whenever it changes
+  useEffect(() => {
+    const saveCart = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, 'users', user.uid);
+          await setDoc(docRef, { cart }, { merge: true });
+        } catch (error) {
+          console.error("Error saving cart:", error);
+        }
+      }
+    };
+
+    // Debounce saving to avoid too many writes
+    const timeoutId = setTimeout(() => {
+      saveCart();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [cart, user]);
 
   const addToCart = (item: CartItem) => {
     setCart(prevCart => {

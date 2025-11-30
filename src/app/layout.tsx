@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { CartProvider } from '@/context/CartContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 const lora = Lora({ 
   subsets: ['latin'],
@@ -46,13 +47,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lora.variable} ${cormorant.variable}`}>
       <body className={lora.className}>
-        <CartProvider>
-          <Navbar />
-          <PageTransition>
-            {children}
-          </PageTransition>
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <PageTransition>
+              {children}
+            </PageTransition>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

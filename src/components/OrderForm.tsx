@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, FormEvent, useRef } from 'react';
+import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import Image from 'next/image';
 import Button from './Button';
 import OrderSuccess from './OrderSuccess';
 import PaymentMethodModal from './PaymentMethodModal';
 import OrderProcessedModal from './OrderProcessedModal';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import SignInButton from './SignInButton';
 
 interface FormData {
   fullName: string;
@@ -44,6 +46,7 @@ interface OrderDetails {
 
 export default function OrderForm() {
   const { cart, removeFromCart, clearCart, getTotalItems, getSubtotal } = useCart();
+  const { user, loading } = useAuth();
   const dateInputRef = useRef<HTMLInputElement | null>(null);
 
   const openNativeDatePicker = () => {
@@ -85,6 +88,17 @@ export default function OrderForm() {
     deliveryAddress: '',
     paymentMethod: 'cash',
   });
+
+  // Prefill form with user data when signed in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || prev.email,
+        fullName: user.displayName || prev.fullName
+      }));
+    }
+  }, [user]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -199,6 +213,37 @@ export default function OrderForm() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl p-12 text-center border border-warmBrown-100">
+          <div className="w-20 h-20 bg-gold-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="font-display text-3xl font-bold text-warmBrown-900 mb-4">
+            Sign In to Order
+          </h2>
+          <p className="font-sans text-warmBrown-600 mb-8 max-w-md mx-auto">
+            Please sign in with your Google account to place an order. This helps us track your order and provide better service.
+          </p>
+          <div className="flex justify-center">
+            <SignInButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto">
@@ -234,6 +279,23 @@ export default function OrderForm() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Cart Summary */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
+          {user && (
+            <div className="mb-4 p-3 bg-gold-50 rounded-lg flex items-center gap-3 border border-gold-100">
+              {user.photoURL && (
+                <Image 
+                  src={user.photoURL} 
+                  alt={user.displayName || 'User'} 
+                  width={32} 
+                  height={32} 
+                  className="rounded-full"
+                />
+              )}
+              <div className="text-sm text-warmBrown-800">
+                <span className="block text-xs text-warmBrown-500">Ordering as</span>
+                <span className="font-semibold">{user.displayName}</span>
+              </div>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-display text-xl md:text-2xl font-bold text-warmBrown-900">
               Your Order ({getTotalItems()} items)
