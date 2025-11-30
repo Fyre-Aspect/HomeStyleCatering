@@ -10,7 +10,13 @@ interface MenuGridProps {
 
 export default function MenuGrid({ dishes, title, subtitle }: MenuGridProps) {
   // Group dishes by category in the specified order
-  const categoryOrder = ['Biryani', 'Curries', 'Appetizers', 'Desserts'];
+  const categoryOrder = [
+    'APPETIZERS',
+    'BRIYANI',
+    'HAKKA ITEMS',
+    'CURRIES',
+    'DESSERTS'
+  ];
   
   const dishesByCategory = categoryOrder.reduce((acc, category) => {
     const categoryDishes = dishes.filter(dish => dish.category === category);

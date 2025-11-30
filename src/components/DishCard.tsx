@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
-import type { Dish } from '@/data/dishes';
+import type { Dish, DishOption } from '@/data/dishes';
 
 interface DishCardProps {
   dish: Dish;
@@ -13,47 +13,67 @@ interface DishCardProps {
 export default function DishCard({ dish, showOrderButton = true }: DishCardProps) {
   const { addToCart } = useCart();
   const [traySize, setTraySize] = useState<'Regular' | 'Large'>('Regular');
+  const [selectedOption, setSelectedOption] = useState<DishOption | null>(null);
   const [justAdded, setJustAdded] = useState(false);
 
-  // Different pricing for different dishes
-  const getPriceForSize = (size: 'Regular' | 'Large') => {
-    if (size === 'Regular') return dish.price;
-    
-    // Large tray prices
-    const largePrices: { [key: string]: number } = {
-      'chicken-biryani': 109,
-      'lamb-biryani': 130,
-      'veg-biryani': 95,
-      'butter-chicken': 75,
-      'Korma-chicken': 65,
-      'haleem': 80,
-      'beda-kheema-roti': 59,
-      'chicken-noodle-gravy': 70,
-    };
-    
-    // If dish has specific large price, use it; otherwise use multiplier
-    return largePrices[dish.id] || dish.price * 2.24;
+  // Initialize selected option
+  useEffect(() => {
+    if (dish.options && dish.options.length > 0) {
+      setSelectedOption(dish.options[0]);
+    }
+  }, [dish]);
+
+  // Calculate price based on size and selected option
+  const getOptionPrice = (option: DishOption, size: 'Regular' | 'Large' = traySize) => {
+    if (size === 'Regular') {
+      return option.price;
+    } else {
+      return option.largePrice || option.price * 2;
+    }
   };
 
-  const trayPrice = getPriceForSize(traySize);
+  const currentPrice = React.useMemo(() => {
+    if (!selectedOption) return dish.price;
+    return getOptionPrice(selectedOption);
+  }, [traySize, selectedOption, dish.price]);
+
+  const getSizePrice = (size: 'Regular' | 'Large') => {
+    if (!selectedOption) return 0;
+    return getOptionPrice(selectedOption, size);
+  };
+
+  const getSizeLabel = (size: 'Regular' | 'Large') => {
+    const isAppetizer = dish.category.includes('APPETIZERS');
+    
+    if (size === 'Regular') {
+      return isAppetizer ? '(25 PCS)' : '(4-8 ppl)';
+    } else {
+      return isAppetizer ? '(50 PCS)' : '(10-15 ppl)';
+    }
+  };
 
   const handleAddToCart = () => {
+    if (!selectedOption) return;
+
     addToCart({
       dishId: dish.id,
       dishName: dish.name,
       quantity: 1,
       traySize,
+      selectedOption: selectedOption.name,
       image: dish.image,
-      price: trayPrice,
+      price: currentPrice,
     });
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 2000);
   };
 
+  if (!selectedOption) return null; // Or loading state
+
   return (
-    <div className="card group">
+    <div className="card group flex flex-col h-full">
       {/* Image Container */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-64 overflow-hidden shrink-0">
         <Image
           src={dish.image}
           alt={dish.name}
@@ -69,66 +89,84 @@ export default function DishCard({ dish, showOrderButton = true }: DishCardProps
       </div>
 
       {/* Content */}
-      <div className="p-6">
-        <h3 className="font-display text-2xl font-bold text-warmBrown-900 mb-2">
-          {dish.name}
-        </h3>
-        <p className="font-sans text-warmBrown-600 mb-3 line-clamp-3">
-          {dish.description}
-        </p>
+      <div className="p-6 flex flex-col flex-grow">
         <div className="mb-4">
-          <p className="text-sm text-warmBrown-600 mb-1">Starting from</p>
-          <span className="text-2xl font-bold text-gold-700">${Math.round(dish.price)}</span>
+          <h3 className="text-xl font-bold text-warmBrown-900 mb-2 group-hover:text-gold-600 transition-colors">
+            {dish.name}
+          </h3>
+          <p className="text-warmBrown-600 text-sm line-clamp-2">
+            {dish.description}
+          </p>
         </div>
-        
-        {showOrderButton && (
-          <div className="space-y-3">
-            {/* Tray Size Selector */}
-            <div>
-              <label className="block text-sm font-semibold text-warmBrown-800 mb-2">Select Tray Size:</label>
-              <div className="grid grid-cols-2 gap-3">
+
+        <div className="mt-auto space-y-4">
+          {/* Options Selection */}
+          {dish.options && dish.options.length > 1 && (
+            <div className="flex bg-warmBrown-50 rounded-lg p-1 mb-2">
+              {dish.options.map((option) => (
                 <button
-                  type="button"
-                  onClick={() => setTraySize('Regular')}
-                  className={`py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
-                    traySize === 'Regular'
-                      ? 'bg-gold-600 text-white shadow-lg'
-                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
+                  key={option.name}
+                  onClick={() => setSelectedOption(option)}
+                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 active:scale-95 ${
+                    selectedOption.name === option.name
+                      ? 'bg-gold-600 text-white shadow-md'
+                      : 'text-warmBrown-600 hover:text-warmBrown-800 hover:bg-warmBrown-100'
                   }`}
                 >
-                  Regular
-                  <div className="text-xs mt-1">(4-5 people)</div>
-                  <div className="text-xs font-bold mt-0.5">${Math.round(dish.price)}</div>
+                  <span className="block">{option.name}</span>
+                  <span className={`text-xs opacity-90 ${selectedOption.name === option.name ? 'text-white' : 'text-warmBrown-500'}`}>
+                    ${getOptionPrice(option)}
+                  </span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setTraySize('Large')}
-                  className={`py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
-                    traySize === 'Large'
-                      ? 'bg-gold-600 text-white shadow-lg'
-                      : 'bg-warmBrown-100 text-warmBrown-700 hover:bg-warmBrown-200'
-                  }`}
-                >
-                  Large
-                  <div className="text-xs mt-1">(6+ people)</div>
-                  <div className="text-xs font-bold mt-0.5">${Math.round(getPriceForSize('Large'))}</div>
-                </button>
-              </div>
+              ))}
+            </div>
+          )}
+
+          {/* Size Selection */}
+          <div className="flex bg-warmBrown-50 rounded-lg p-1">
+            {(['Regular', 'Large'] as const).map((size) => (
+              <button
+                key={size}
+                onClick={() => setTraySize(size)}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 active:scale-95 ${
+                  traySize === size
+                    ? 'bg-gold-600 text-white shadow-md'
+                    : 'text-warmBrown-600 hover:text-warmBrown-800 hover:bg-warmBrown-100'
+                }`}
+              >
+                <span className="block">{size}</span>
+                <span className="block text-xs opacity-90 mb-0.5">{getSizeLabel(size)}</span>
+                <span className={`text-xs font-bold ${traySize === size ? 'text-white' : 'text-warmBrown-500'}`}>
+                  ${getSizePrice(size)}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Price and Action */}
+          <div className="flex items-center justify-between pt-4 border-t border-warmBrown-100">
+            <div className="flex flex-col">
+              <span className="text-xs text-warmBrown-500 font-medium uppercase tracking-wider">
+                Price
+              </span>
+              <span className="text-2xl font-bold text-gold-600">
+                ${currentPrice}
+              </span>
             </div>
 
-            {/* Add to Cart Button */}
-            <button
-              onClick={handleAddToCart}
-              className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-200 active:scale-95 hover:scale-105 shadow-lg hover:shadow-xl ${
-                justAdded 
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gold-600 hover:bg-gold-700 text-white'
-              }`}
-            >
-              {justAdded ? '✓ Added!' : '🛒 Add to Cart'}
-            </button>
+            {showOrderButton && (
+              <button
+                onClick={handleAddToCart}
+                disabled={justAdded}
+                className={`btn-primary py-2 px-6 text-sm ${
+                  justAdded ? 'bg-green-600 border-green-600' : ''
+                }`}
+              >
+                {justAdded ? 'Added!' : 'Add to Cart'}
+              </button>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

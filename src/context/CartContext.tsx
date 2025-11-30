@@ -9,13 +9,14 @@ export interface CartItem {
   traySize: 'Regular' | 'Large';
   image: string;
   price: number;
+  selectedOption?: string;
 }
 
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (dishId: string, traySize?: string) => void;
-  updateQuantity: (dishId: string, quantity: number) => void;
+  removeFromCart: (dishId: string, traySize?: string, selectedOption?: string) => void;
+  updateQuantity: (dishId: string, quantity: number, traySize?: string, selectedOption?: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getSubtotal: () => number;
@@ -28,12 +29,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (item: CartItem) => {
     setCart(prevCart => {
-      // Check if same dish with same tray size exists
-      const existingItem = prevCart.find(i => i.dishId === item.dishId && i.traySize === item.traySize);
+      // Check if same dish with same tray size and option exists
+      const existingItem = prevCart.find(i => 
+        i.dishId === item.dishId && 
+        i.traySize === item.traySize && 
+        i.selectedOption === item.selectedOption
+      );
       
       if (existingItem) {
         return prevCart.map(i =>
-          i.dishId === item.dishId && i.traySize === item.traySize
+          i.dishId === item.dishId && i.traySize === item.traySize && i.selectedOption === item.selectedOption
             ? { ...i, quantity: i.quantity + item.quantity }
             : i
         );
@@ -43,18 +48,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (dishId: string, traySize?: string) => {
-    setCart(prevCart => prevCart.filter(item => !(item.dishId === dishId && (!traySize || item.traySize === traySize))));
+  const removeFromCart = (dishId: string, traySize?: string, selectedOption?: string) => {
+    setCart(prevCart => prevCart.filter(item => 
+      !(item.dishId === dishId && 
+        (!traySize || item.traySize === traySize) &&
+        (!selectedOption || item.selectedOption === selectedOption)
+      )
+    ));
   };
 
-  const updateQuantity = (dishId: string, quantity: number) => {
+  const updateQuantity = (dishId: string, quantity: number, traySize?: string, selectedOption?: string) => {
     if (quantity < 1) {
-      removeFromCart(dishId);
+      removeFromCart(dishId, traySize, selectedOption);
       return;
     }
     setCart(prevCart =>
       prevCart.map(item =>
-        item.dishId === dishId ? { ...item, quantity } : item
+        item.dishId === dishId && 
+        (!traySize || item.traySize === traySize) &&
+        (!selectedOption || item.selectedOption === selectedOption)
+          ? { ...item, quantity } : item
       )
     );
   };
