@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { auth } from '@/utils/firebase';
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { auth, app } from '@/utils/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -37,6 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
+      if (typeof window !== 'undefined') {
+        const analytics = getAnalytics(app);
+        logEvent(analytics, 'login', {
+          method: 'google'
+        });
+      }
     } catch (error) {
       console.error("Error signing in with Google", error);
     }

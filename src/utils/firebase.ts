@@ -4,13 +4,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAaS6GgIpTiDDmQ2G15doQFoKJjIDuIJDA",
-  authDomain: "homestyle-catering-c1aaf.firebaseapp.com",
-  projectId: "homestyle-catering-c1aaf",
-  storageBucket: "homestyle-catering-c1aaf.firebasestorage.app",
-  messagingSenderId: "235419209340",
-  appId: "1:235419209340:web:54e723fb20bddd94c3c3f9",
-  measurementId: "G-GH0FK0C54B"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

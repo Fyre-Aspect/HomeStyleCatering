@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/utils/firebase';
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { db, app } from '@/utils/firebase';
 import { useAuth } from './AuthContext';
 
 export interface CartItem {
@@ -76,6 +77,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cart, user]);
 
   const addToCart = (item: CartItem) => {
+    if (typeof window !== 'undefined') {
+      const analytics = getAnalytics(app);
+      logEvent(analytics, 'add_to_cart', {
+        currency: 'USD',
+        value: item.price * item.quantity,
+        items: [{
+          item_id: item.dishId,
+          item_name: item.dishName,
+          item_variant: item.traySize + (item.selectedOption ? ` - ${item.selectedOption}` : ''),
+          price: item.price,
+          quantity: item.quantity
+        }]
+      });
+    }
+
     setCart(prevCart => {
       // Check if same dish with same tray size and option exists
       const existingItem = prevCart.find(i => 

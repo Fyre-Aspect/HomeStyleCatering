@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Lora, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -6,6 +7,7 @@ import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/context/AuthContext';
+import AnalyticsListener from '@/components/AnalyticsListener';
 
 const lora = Lora({ 
   subsets: ['latin'],
@@ -49,6 +51,9 @@ export default function RootLayout({
       <body className={lora.className}>
         <AuthProvider>
           <CartProvider>
+            <Suspense fallback={null}>
+              <AnalyticsListener />
+            </Suspense>
             <Navbar />
             <PageTransition>
               {children}

@@ -9,6 +9,8 @@ import OrderProcessedModal from './OrderProcessedModal';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import SignInButton from './SignInButton';
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { app } from '@/utils/firebase';
 
 interface FormData {
   fullName: string;
@@ -166,6 +168,24 @@ export default function OrderForm() {
       });
 
       if (!response.ok) throw new Error('Failed to submit order');
+
+      if (typeof window !== 'undefined') {
+        const analytics = getAnalytics(app);
+        logEvent(analytics, 'purchase', {
+          transaction_id: new Date().getTime().toString(),
+          value: total,
+          currency: 'USD',
+          tax: 0,
+          shipping: deliveryFee,
+          items: cart.map(item => ({
+            item_id: item.dishId,
+            item_name: item.dishName,
+            item_variant: item.traySize + (item.selectedOption ? ` - ${item.selectedOption}` : ''),
+            price: item.price,
+            quantity: item.quantity
+          }))
+        });
+      }
 
       // Prepare success details for full summary modal
       setSuccessOrderDetails({
