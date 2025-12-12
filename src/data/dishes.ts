@@ -322,7 +322,7 @@ export const dishes: Dish[] = [
     id: 'fruit-bowl',
     name: 'Fruit Bowl (Custard)',
     description: 'Fresh fruits served in creamy custard.',
-    image: '/images/Cake.jpg',
+    image: '/images/Fruit bowl.jpg',
     category: 'DESSERTS',
     price: 50,
     featured: false,
