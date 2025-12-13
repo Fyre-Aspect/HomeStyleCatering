@@ -110,8 +110,20 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Sign In Button */}
-            <SignInButton />
+            {/* Sign In Button & Halal Logo */}
+            <div className="flex items-center gap-4">
+              <div className="relative group" title="Halal Certified">
+                <div className="absolute -inset-1 bg-gradient-to-r from-gold-300 to-gold-600 rounded-full opacity-20 blur group-hover:opacity-50 transition duration-500"></div>
+                <Image
+                  src="/images/HALAL LOGO.png"
+                  alt="Halal Certified"
+                  width={45}
+                  height={45}
+                  className="relative object-contain drop-shadow-md"
+                />
+              </div>
+              <SignInButton />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
