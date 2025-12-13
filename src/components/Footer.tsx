@@ -59,7 +59,9 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/home_stylecateringkwc?utm_source=qr&igsh=MXNqNnR5eW91a3pudA%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-warmBrown-300 hover:text-gold-400 transition-colors"
                 aria-label="Instagram"
               >
