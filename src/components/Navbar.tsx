@@ -60,9 +60,9 @@ export default function Navbar() {
             <Image
               src="/Homestyle Catering.png"
               alt="Homestyle Catering"
-              width={50}
-              height={50}
-              className="h-10 md:h-12 w-auto"
+              width={60}
+              height={60}
+              className="h-12 md:h-14 w-auto"
               priority
             />
             <h1 className="font-display text-2xl md:text-3xl font-bold text-gold-700">
