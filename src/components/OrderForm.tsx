@@ -109,16 +109,117 @@ export default function OrderForm() {
   const [processedStatus, setProcessedStatus] = useState<'processing' | 'success'>('processing');
   const [successOrderDetails, setSuccessOrderDetails] = useState<OrderDetails | null>(null);
 
-  const DELIVERY_FEE = 6.00;
+  // Delivery Fee Calculation State
+  const [calculatedDeliveryFee, setCalculatedDeliveryFee] = useState(3.00); // Base fee $3
+  const [distance, setDistance] = useState<number | null>(null);
+  const [isCalculatingFee, setIsCalculatingFee] = useState(false);
+  const [feeError, setFeeError] = useState<string | null>(null);
+
   const subtotal = getSubtotal();
-  const deliveryFee = formData.deliveryOption === 'delivery' ? DELIVERY_FEE : 0;
+  // Base fee is $3.00. If distance is calculated, it's $3 + $0.50/km.
+  // If delivery is selected but distance not calculated yet, show base fee $3.00 or wait?
+  // Let's default to base fee $3.00 if delivery is selected.
+  const deliveryFee = formData.deliveryOption === 'delivery' ? calculatedDeliveryFee : 0;
   const total = subtotal + deliveryFee;
+
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI / 180);
+  };
+
+  const calculateDistance = async (address: string) => {
+    if (!address) {
+      setFeeError("Please enter an address first.");
+      return;
+    }
+    
+    setIsCalculatingFee(true);
+    setFeeError(null);
+    
+    try {
+      // Store coordinates: 623 westheights drive N2N1R2
+      const storeLat = 43.4220330;
+      const storeLon = -80.5413040;
+
+      // Geocode user address
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`, {
+        headers: { 'User-Agent': 'HomeStyleCateringApp/1.0' }
+      });
+      
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const userLat = parseFloat(data[0].lat);
+        const userLon = parseFloat(data[0].lon);
+
+        // Calculate Haversine distance
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(userLat - storeLat);
+        const dLon = deg2rad(userLon - storeLon);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(deg2rad(storeLat)) * Math.cos(deg2rad(userLat)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        // Check if distance is within 25km
+        if (d > 25) {
+          setFeeError(`Sorry, we only deliver within 25km of the Waterloo Region. Your location is ${d.toFixed(1)}km away.`);
+          setDistance(null);
+          setCalculatedDeliveryFee(3.00);
+          return;
+        }
+
+        // Check if address is in Waterloo Region
+        const displayName = data[0].display_name.toLowerCase();
+        const validRegions = ['kitchener', 'waterloo', 'cambridge', 'region of waterloo', 'woolwich', 'wilmot', 'wellesley', 'north dumfries'];
+        const isValidRegion = validRegions.some(region => displayName.includes(region));
+
+        if (!isValidRegion) {
+          setFeeError("Sorry, we currently only deliver within the Waterloo Region.");
+          setDistance(null);
+          setCalculatedDeliveryFee(3.00);
+          return;
+        }
+        setDistance(d);
+        // Fee: $3 base + $0.50 per km
+        const fee = 3 + (0.75 * d);
+        setCalculatedDeliveryFee(fee);
+      } else {
+        setFeeError("Could not find address. Please check for typos or try a more specific address.");
+        setDistance(null);
+        setCalculatedDeliveryFee(3.00); // Reset to base fee
+      }
+    } catch (error) {
+      console.error("Error calculating distance:", error);
+      setFeeError("Error calculating delivery fee. Please try again.");
+    } finally {
+      setIsCalculatingFee(false);
+    }
+  };
+
+  // Auto-calculate distance when address changes
+  useEffect(() => {
+    if (formData.deliveryOption === 'delivery' && formData.deliveryAddress) {
+      const timer = setTimeout(() => {
+        calculateDistance(formData.deliveryAddress);
+      }, 1000); // Debounce for 1 second
+
+      return () => clearTimeout(timer);
+    }
+  }, [formData.deliveryAddress, formData.deliveryOption]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Reset delivery fee calculation if address changes
+    if (name === 'deliveryAddress') {
+      setDistance(null);
+      setCalculatedDeliveryFee(3.00);
+      setFeeError(null);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -532,7 +633,7 @@ export default function OrderForm() {
                     onChange={handleChange}
                     className="w-4 h-4 text-gold-600 focus:ring-gold-500 mr-2"
                   />
-                  <span className="text-warmBrown-700 group-hover:text-warmBrown-900 transition-colors">Delivery (+$6.00)</span>
+                  <span className="text-warmBrown-700 group-hover:text-warmBrown-900 transition-colors">Delivery (Base $3.00 + $0.50/km)</span>
                 </label>
               </div>
               {formData.deliveryOption === 'delivery' && (
@@ -548,16 +649,41 @@ export default function OrderForm() {
                 <label htmlFor="deliveryAddress" className="block font-sans text-sm font-semibold text-warmBrown-800 mb-2">
                   Delivery Address *
                 </label>
-                <textarea
-                  id="deliveryAddress"
-                  name="deliveryAddress"
-                  value={formData.deliveryAddress}
-                  onChange={handleChange}
-                  required
-                  rows={3}
-                  className="w-full font-sans px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all resize-none"
-                  placeholder="Enter your complete delivery address (street, city, postal code)"
-                />
+                <div className="space-y-3">
+                  <textarea
+                    id="deliveryAddress"
+                    name="deliveryAddress"
+                    value={formData.deliveryAddress}
+                    onChange={handleChange}
+                    required
+                    rows={3}
+                    className="w-full font-sans px-4 py-3 border border-warmBrown-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all resize-none"
+                    placeholder="Enter your complete delivery address (street, city, postal code)"
+                  />
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-warmBrown-50 p-4 rounded-lg border border-warmBrown-200">
+                    <div className="flex-1">
+                        {isCalculatingFee ? (
+                            <span className="text-gold-600 flex items-center gap-2">
+                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Calculating delivery fee...
+                            </span>
+                        ) : feeError ? (
+                            <span className="text-red-600 text-sm">{feeError}</span>
+                        ) : distance !== null ? (
+                            <div className="text-sm">
+                                <p className="text-warmBrown-800"><span className="font-semibold">Distance:</span> {distance.toFixed(1)} km</p>
+                                <p className="text-warmBrown-800"><span className="font-semibold">Delivery Fee:</span> ${calculatedDeliveryFee.toFixed(2)}</p>
+                            </div>
+                        ) : (
+                            <span className="text-warmBrown-600 text-sm">Enter address to see delivery fee.</span>
+                        )}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -614,7 +740,7 @@ export default function OrderForm() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (formData.deliveryOption === 'delivery' && (!!feeError || distance === null))}
               className="w-full text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed inline-block font-semibold rounded-lg transition-all duration-200 text-center active:scale-95 hover:scale-105 bg-gold-600 hover:bg-gold-700 text-white shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? (
