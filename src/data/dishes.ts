@@ -250,8 +250,8 @@ export const dishes: Dish[] = [
     price: 35,
     featured: false,
     options: [
-      { name: 'Veg', price: 35, largePrice: 70 },
-      { name: 'Chicken', price: 45, largePrice: 90 }
+      { name: 'Veg', price: 60, largePrice: 105 },
+      { name: 'Chicken', price: 75, largePrice: 115}
     ]
   },
   {
